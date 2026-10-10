@@ -1,0 +1,2243 @@
+<!DOCTYPE html>
+<html lang="ca" data-theme="normal" class="m2">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0f6b73">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>El meu tauler</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Lexend:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5efe6; --card:#ffffff; --ink:#17202e; --muted:#4b5666; --line:#d8cfc0;
+  --brand:#0f6b73; --brand-ink:#ffffff; --ok:#15803d; --bad:#b91c1c; --focus:#f59e0b;
+  --r:22px; --fs:18px;
+}
+html[data-theme=alt]{ --bg:#000; --card:#0c0c0c; --ink:#fff; --muted:#f0f0f0; --line:#fff; --brand:#ffe600; --brand-ink:#000; --ok:#4ade80; --bad:#ff6b6b; }
+html{font-size:var(--fs);-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+html.m1{scroll-snap-type:y proximity}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);min-height:100dvh;
+  font-family:'Atkinson Hyperlegible','Lexend',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;line-height:1.35;
+  padding:env(safe-area-inset-top) 0 calc(96px + env(safe-area-inset-bottom))}
+html[data-font=dys] body{font-family:'Lexend','Atkinson Hyperlegible',system-ui,sans-serif;letter-spacing:.02em;word-spacing:.08em}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0}
+button:disabled{opacity:.45;cursor:not-allowed}
+:focus-visible{outline:4px solid var(--focus);outline-offset:2px}
+h1,h2,h3,p{margin:0}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--card);border:3px solid var(--line);border-radius:14px;padding:12px 14px;min-height:56px;width:100%}
+label.f{display:block;font-weight:700;margin:14px 0 6px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.muted{color:var(--muted)}
+.center{text-align:center}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.stack{display:flex;flex-direction:column;gap:12px}
+.grow{flex:1}
+
+/* ---------- Botons ---------- */
+.btn{min-height:60px;padding:12px 22px;border-radius:18px;font-weight:700;font-size:1.05rem;background:var(--brand);color:var(--brand-ink);
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;text-align:center;border:3px solid transparent}
+.btn.alt{background:var(--card);color:var(--ink);border-color:var(--line)}
+.btn.ok{background:var(--ok);color:#fff}
+.btn.bad{background:var(--bad);color:#fff}
+.btn.big{min-height:76px;font-size:1.25rem;border-radius:22px}
+.btn.block{display:flex;width:100%}
+.btn:active{transform:scale(.97)}
+.ibtn{width:60px;height:60px;border-radius:50%;background:var(--card);border:3px solid var(--line);font-size:1.6rem;display:grid;place-items:center;flex:none}
+html[data-theme=alt] .btn.ok,html[data-theme=alt] .btn.bad{color:#000}
+
+/* ---------- Capçalera ---------- */
+.top{position:sticky;top:0;z-index:30;background:var(--bg);border-bottom:3px solid var(--line);
+  display:flex;align-items:center;gap:10px;padding:10px 14px}
+.top .hi{flex:1;min-width:0}
+.top .hi b{display:block;font-size:1.3rem;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.top .hi small{color:var(--muted);font-size:.85rem}
+.banner{margin:12px 14px 0;padding:14px 16px;border-radius:18px;background:#fff4d6;border:3px solid #f59e0b;color:#4a3300;font-weight:700;text-align:center}
+html[data-theme=alt] .banner{background:#332900;color:#fff;border-color:#ffe600}
+
+/* ---------- Tauler ---------- */
+.board{display:flex;flex-direction:column;gap:18px;padding:16px 14px;max-width:760px;margin:0 auto}
+html.m3 .board{max-width:1100px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));align-items:start}
+html.m1 .card{min-height:calc(100dvh - 190px);scroll-snap-align:start;scroll-margin-top:84px;display:flex;flex-direction:column}
+html.m1 .card .card-b{flex:1;display:flex;flex-direction:column;justify-content:center}
+.card{background:var(--card);border:3px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:0 6px 16px rgba(0,0,0,.08)}
+html[data-theme=alt] .card{box-shadow:none}
+.card-h{display:flex;align-items:center;gap:12px;padding:10px 12px 10px 16px;color:#fff;background:var(--c)}
+.card-h .ic{font-size:1.7rem;line-height:1}
+.card-h h2{font-size:1.15rem;flex:1;font-weight:700}
+.say{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.22);font-size:1.5rem;color:#fff;flex:none;display:grid;place-items:center;border:2px solid rgba(255,255,255,.55)}
+.card-b{padding:16px}
+.next-hint{display:block;margin:14px auto 0;font-weight:700;color:var(--muted);font-size:.95rem}
+.foot{padding:6px 18px 14px;text-align:center;font-size:.78rem;color:var(--muted)}
+.foot a{color:inherit}
+
+/* ---------- Swipe (llisca cap als costats) ---------- */
+.sw-wrap{position:relative}
+.swipe{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;gap:0}
+.swipe::-webkit-scrollbar{display:none}
+.slide{flex:0 0 100%;scroll-snap-align:center;padding:2px 44px;min-width:0;display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center;justify-content:center}
+.arr{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:64px;border-radius:14px;background:var(--card);border:3px solid var(--line);font-size:1.5rem;font-weight:700;display:grid;place-items:center;z-index:2}
+.arr.l{left:-6px}.arr.r{right:-6px}
+.dots{display:flex;gap:8px;justify-content:center;margin-top:12px}
+.dots i{width:12px;height:12px;border-radius:50%;background:var(--line);display:block}
+.dots i.on{background:var(--brand);width:28px;border-radius:8px}
+
+/* ---------- Pictogrames i tessel·les ---------- */
+.pict{width:var(--sz,64px);height:var(--sz,64px);display:grid;place-items:center;position:relative;flex:none}
+.pict .pe{font-size:calc(var(--sz,64px)*.68);line-height:1}
+.pict img{width:100%;height:100%;object-fit:contain;background:#fff;border-radius:14px;border:2px solid #e5e7eb}
+.pict.img .pe{display:none}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tiles.c2{grid-template-columns:repeat(2,1fr)}
+.tile{position:relative;border:3px solid var(--line);border-radius:18px;padding:12px 6px;min-height:118px;background:var(--card);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-weight:700;font-size:.92rem;text-align:center;line-height:1.15}
+.tile[aria-pressed=true]{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand) inset}
+.tile[aria-pressed=true]::after{content:'✓';position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:50%;background:var(--brand);color:var(--brand-ink);display:grid;place-items:center;font-size:1rem}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;min-height:52px;border-radius:999px;border:3px solid var(--line);background:var(--card);font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+
+/* ---------- Segmentats i interruptors ---------- */
+.seg{display:flex;gap:8px;flex-wrap:wrap}
+.seg button{flex:1;min-width:84px;min-height:56px;border:3px solid var(--line);border-radius:14px;font-weight:700;padding:8px 10px;background:var(--card)}
+.seg button[aria-pressed=true]{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+.swrow{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:2px solid var(--line)}
+.swrow>div{flex:1}.swrow small{display:block;color:var(--muted)}
+.sw{width:76px;height:44px;border-radius:999px;background:var(--line);position:relative;flex:none;border:3px solid var(--line)}
+.sw::after{content:'';position:absolute;top:2px;left:2px;width:34px;height:34px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.4);transition:left .15s}
+.sw[aria-checked=true]{background:var(--ok);border-color:var(--ok)}
+.sw[aria-checked=true]::after{left:32px}
+.dot{width:52px;height:52px;border-radius:50%;border:4px solid var(--line);flex:none}
+.dot[aria-pressed=true]{border-color:var(--ink);box-shadow:0 0 0 3px var(--bg),0 0 0 6px var(--ink)}
+
+/* ---------- Pantalles a sobre (sheets) ---------- */
+.sheet{position:fixed;inset:0;z-index:60;background:var(--bg);display:flex;flex-direction:column}
+.sheet-h{display:flex;gap:10px;align-items:center;padding:calc(10px + env(safe-area-inset-top)) 12px 10px;border-bottom:3px solid var(--line);background:var(--bg)}
+.sheet-h .btn{min-height:56px;padding:8px 18px}
+.sheet-t{font-weight:700;font-size:1.2rem;flex:1;min-width:0}
+.sheet-b{overflow:auto;padding:16px 16px calc(40px + env(safe-area-inset-bottom));flex:1;-webkit-overflow-scrolling:touch}
+.sheet-b h3{margin:22px 0 10px;font-size:1.1rem}
+.sheet-b h3:first-child{margin-top:0}
+.acc{border:3px solid var(--line);border-radius:18px;margin-bottom:12px;background:var(--card);overflow:hidden}
+.acc>button{width:100%;text-align:left;padding:16px;font-weight:700;font-size:1.1rem;display:flex;gap:12px;align-items:center;min-height:64px}
+.acc>button span.cv{margin-left:auto;font-size:1.3rem}
+.acc .acc-b{padding:4px 16px 18px;border-top:3px solid var(--line)}
+.li{display:flex;align-items:center;gap:12px;padding:12px;border:3px solid var(--line);border-radius:16px;margin:8px 0;background:var(--card)}
+.li .t{flex:1;min-width:0;font-weight:700}
+.li .t small{display:block;font-weight:400;color:var(--muted)}
+.mini{min-width:52px;min-height:52px;border-radius:14px;border:3px solid var(--line);font-weight:700;font-size:1.2rem;background:var(--card);display:grid;place-items:center;padding:0 10px}
+.mini.bad{background:var(--bad);color:#fff;border-color:var(--bad)}
+.photo{width:64px;height:64px;border-radius:50%;object-fit:cover;background:var(--line);display:grid;place-items:center;font-size:2rem;flex:none;border:3px solid var(--line)}
+
+/* ---------- Ajuda (sempre visible) ---------- */
+.helpbar{position:fixed;left:0;right:0;bottom:0;z-index:40;padding:10px 14px calc(10px + env(safe-area-inset-bottom));
+  background:linear-gradient(180deg,transparent,var(--bg) 35%);display:flex;justify-content:center;pointer-events:none}
+.helpbtn{pointer-events:auto;min-height:68px;width:min(100%,560px);border-radius:22px;background:var(--bad);color:#fff;font-weight:700;font-size:1.3rem;
+  display:flex;align-items:center;justify-content:center;gap:12px;box-shadow:0 6px 18px rgba(185,28,28,.45);border:4px solid #fff}
+html[data-theme=alt] .helpbtn{color:#000;border-color:#000}
+
+/* ---------- Rellotge ---------- */
+.clock-wrap{display:flex;flex-direction:column;align-items:center;gap:12px}
+.clock-svg{width:min(78vw,330px);height:auto;display:block}
+.digital{font-weight:700;font-size:clamp(3.6rem,22vw,6rem);line-height:1;letter-spacing:.02em;padding:22px 26px;border:6px solid var(--acc);background:var(--face);color:var(--ink2);min-width:min(86vw,340px);text-align:center;font-variant-numeric:tabular-nums}
+.digital small{font-size:.35em;opacity:.8}
+.cap{font-size:1.15rem;font-weight:700;text-align:center;min-height:2.6em}
+.flag{width:46px;height:30px;border-radius:6px;border:2px solid rgba(0,0,0,.35);display:block;flex:none}
+
+/* ---------- Avui, temps, etc. ---------- */
+.bigday{font-size:2.1rem;font-weight:700;line-height:1.1;text-transform:capitalize}
+.bigemoji{font-size:5rem;line-height:1}
+.badge{display:inline-block;padding:8px 16px;border-radius:999px;font-weight:700;background:#fde68a;color:#3b2a00}
+.badge.red{background:#fecaca;color:#7f1d1d}
+.badge.green{background:#bbf7d0;color:#14532d}
+.faces{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.face{border:3px solid var(--line);border-radius:18px;padding:10px 4px;min-height:110px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-weight:700;background:var(--card);font-size:.9rem}
+.face[aria-pressed=true]{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand) inset}
+.face .pe{font-size:2.6rem;line-height:1}
+.steps .li.done{opacity:.6}.steps .li.done .t{text-decoration:line-through}
+.prog{height:16px;border-radius:99px;background:var(--line);overflow:hidden}.prog i{display:block;height:100%;background:var(--ok);transition:width .3s}
+.ring{width:210px;height:210px}
+
+/* ---------- Teclat PIN ---------- */
+.pin-dots{display:flex;gap:16px;justify-content:center;margin:18px 0}
+.pin-dots i{width:26px;height:26px;border-radius:50%;border:4px solid var(--ink);display:block}
+.pin-dots i.on{background:var(--ink)}
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:340px;margin:0 auto}
+.keypad button{min-height:74px;border-radius:20px;border:3px solid var(--line);background:var(--card);font-size:1.8rem;font-weight:700}
+
+/* ---------- Alarma ---------- */
+.alarm{position:fixed;inset:0;z-index:90;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;text-align:center;color:#fff;background:var(--a1)}
+.alarm.flash{animation:flash 1s steps(2,jump-none) infinite}
+@keyframes flash{0%{background:var(--a1)}50%{background:var(--a2)}100%{background:var(--a1)}}
+.alarm .big{font-size:7rem;line-height:1}
+.alarm h1{font-size:2.2rem;line-height:1.15}
+.alarm p{font-size:1.3rem;font-weight:700}
+.alarm .btn{width:min(100%,460px);background:#fff;color:#111;min-height:84px;font-size:1.35rem}
+.alarm .btn.alt{background:transparent;color:#fff;border-color:#fff;min-height:64px}
+.alarm .photo{width:130px;height:130px;border-radius:24px}
+.mic-pulse{width:140px;height:140px;border-radius:50%;background:var(--bad);color:#fff;font-size:4rem;display:grid;place-items:center;margin:10px auto;animation:pulse 1.2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(185,28,28,.6)}100%{box-shadow:0 0 0 38px rgba(185,28,28,0)}}
+.toast{position:fixed;left:50%;bottom:calc(110px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#111;color:#fff;padding:14px 20px;border-radius:16px;z-index:100;font-weight:700;max-width:90vw;text-align:center}
+canvas.confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:95}
+.hero{display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;padding:24px 16px}
+.hero h1{font-size:1.9rem;line-height:1.15}
+.wiz{min-height:100dvh;padding:24px 16px calc(40px + env(safe-area-inset-bottom));max-width:620px;margin:0 auto;display:flex;flex-direction:column;gap:18px;justify-content:center}
+.stepdots{display:flex;gap:8px;justify-content:center}.stepdots i{width:12px;height:12px;border-radius:50%;background:var(--line)}.stepdots i.on{background:var(--brand)}
+@media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} .alarm.flash,.mic-pulse{animation:none} .prog i,.sw::after{transition:none} }
+html.calm .alarm.flash,html.calm .mic-pulse{animation:none}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* ============================================================
+   NUCLI (funcions pures, sense DOM): hora parlada, dates, festius,
+   intèrpret de frases d'agenda i càlcul d'avisos.
+   ============================================================ */
+const Core = (() => {
+  const DAYS = {
+    ca: ['diumenge', 'dilluns', 'dimarts', 'dimecres', 'dijous', 'divendres', 'dissabte'],
+    es: ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'],
+  };
+  const MONTHS = {
+    ca: ['gener', 'febrer', 'març', 'abril', 'maig', 'juny', 'juliol', 'agost', 'setembre', 'octubre', 'novembre', 'desembre'],
+    es: ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'],
+  };
+  const HN = {
+    ca: ['', 'una', 'dues', 'tres', 'quatre', 'cinc', 'sis', 'set', 'vuit', 'nou', 'deu', 'onze', 'dotze'],
+    es: ['', 'una', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez', 'once', 'doce'],
+  };
+  const PERIOD = {
+    ca: { dawn: 'de la matinada', morning: 'del matí', noon: 'del migdia', afternoon: 'de la tarda', evening: 'del vespre', night: 'de la nit' },
+    es: { dawn: 'de la madrugada', morning: 'de la mañana', noon: 'del mediodía', afternoon: 'de la tarde', evening: 'de la noche', night: 'de la noche' },
+  };
+
+  const pad = (n) => String(n).padStart(2, '0');
+  const ymd = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const cap = (s) => (s ? s[0].toUpperCase() + s.slice(1) : s);
+  const h12 = (h) => (h % 12 === 0 ? 12 : h % 12);
+  const startOfDay = (d) => { const x = new Date(d); x.setHours(0, 0, 0, 0); return x; };
+
+  function periodKey(h) {
+    if (h === 0) return 'night';
+    if (h <= 4) return 'dawn';
+    if (h <= 11) return 'morning';
+    if (h <= 14) return 'noon';
+    if (h <= 19) return 'afternoon';
+    if (h <= 21) return 'evening';
+    return 'night';
+  }
+
+  /* ---------- Hora parlada ---------- */
+  function speakTime(d, lang, withPeriod = true) {
+    let h = d.getHours();
+    let m = Math.round(d.getMinutes() / 5) * 5;
+    if (m === 60) { m = 0; h = (h + 1) % 24; }
+    const H = h12(h), N = h12(h + 1);
+    const w = (n) => HN[lang][n];
+    const art = (n) => (n === 1 ? 'la' : lang === 'ca' ? 'les' : 'las');
+    const be = (n) => (n === 1 ? (lang === 'ca' ? 'És' : 'Es') : lang === 'ca' ? 'Són' : 'Son');
+    let s;
+    if (lang === 'ca') {
+      const de = (n) => (n === 1 || n === 11 ? "d'" : 'de ');
+      const rel = {
+        0: `${be(H)} ${art(H)} ${w(H)} en punt`,
+        5: `${be(H)} ${art(H)} ${w(H)} i cinc`,
+        10: `${be(H)} ${art(H)} ${w(H)} i deu`,
+        15: `És un quart ${de(N)}${w(N)}`,
+        20: `${be(H)} ${art(H)} ${w(H)} i vint`,
+        25: `${be(H)} ${art(H)} ${w(H)} i vint-i-cinc`,
+        30: `Són dos quarts ${de(N)}${w(N)}`,
+        35: `${be(N)} ${art(N)} ${w(N)} menys vint-i-cinc`,
+        40: `${be(N)} ${art(N)} ${w(N)} menys vint`,
+        45: `Són tres quarts ${de(N)}${w(N)}`,
+        50: `${be(N)} ${art(N)} ${w(N)} menys deu`,
+        55: `${be(N)} ${art(N)} ${w(N)} menys cinc`,
+      };
+      s = rel[m];
+    } else {
+      const rel = {
+        0: `${be(H)} ${art(H)} ${w(H)} en punto`,
+        5: `${be(H)} ${art(H)} ${w(H)} y cinco`,
+        10: `${be(H)} ${art(H)} ${w(H)} y diez`,
+        15: `${be(H)} ${art(H)} ${w(H)} y cuarto`,
+        20: `${be(H)} ${art(H)} ${w(H)} y veinte`,
+        25: `${be(H)} ${art(H)} ${w(H)} y veinticinco`,
+        30: `${be(H)} ${art(H)} ${w(H)} y media`,
+        35: `${be(N)} ${art(N)} ${w(N)} menos veinticinco`,
+        40: `${be(N)} ${art(N)} ${w(N)} menos veinte`,
+        45: `${be(N)} ${art(N)} ${w(N)} menos cuarto`,
+        50: `${be(N)} ${art(N)} ${w(N)} menos diez`,
+        55: `${be(N)} ${art(N)} ${w(N)} menos cinco`,
+      };
+      s = rel[m];
+    }
+    if (withPeriod) s += ' ' + PERIOD[lang][periodKey(h)];
+    return s;
+  }
+
+  /* "a les onze del matí" (per a avisos de l'agenda) */
+  function atTimeWords(d, lang) {
+    const s = speakTime(d, lang, true);
+    return 'a ' + s.replace(/^(Són|És|Son|Es)\s+/, '').replace(/^(un quart|dos quarts|tres quarts)/, '$1');
+  }
+
+  const monthDe = (mi, lang) => {
+    const mn = MONTHS[lang][mi];
+    if (lang === 'ca') return (/^[aeiou]/.test(mn) ? "d'" : 'de ') + mn;
+    return 'de ' + mn;
+  };
+  const dayMonth = (d, lang) => `${d.getDate()} ${monthDe(d.getMonth(), lang)}`;
+  const dateLong = (d, lang) => `${DAYS[lang][d.getDay()]}, ${dayMonth(d, lang)} ${lang === 'ca' ? 'de' : 'de'} ${d.getFullYear()}`;
+  function speakDate(d, lang) {
+    return (lang === 'ca' ? 'Avui és ' : 'Hoy es ') + `${DAYS[lang][d.getDay()]}, ${dayMonth(d, lang)}.`;
+  }
+
+  function dayWord(ts, now, lang) {
+    const d = startOfDay(new Date(ts));
+    const t = startOfDay(new Date(now));
+    const diff = Math.round((d - t) / 86400000);
+    if (diff === 0) return lang === 'ca' ? 'avui' : 'hoy';
+    if (diff === 1) return lang === 'ca' ? 'demà' : 'mañana';
+    if (diff === 2) return lang === 'ca' ? 'demà passat' : 'pasado mañana';
+    if (diff > 2 && diff < 7) return (lang === 'ca' ? 'el ' : 'el ') + DAYS[lang][d.getDay()];
+    return 'el ' + dayMonth(d, lang);
+  }
+  function whenWords(ts, now, lang) {
+    const d = new Date(ts);
+    return `${dayWord(ts, now, lang)} ${atTimeWords(d, lang)}`;
+  }
+  function countdown(ts, now, lang) {
+    let mins = Math.round((ts - now) / 60000);
+    if (mins <= 0) return lang === 'ca' ? 'ara' : 'ahora';
+    const pre = lang === 'ca' ? 'falten ' : 'faltan ';
+    if (mins < 60) return pre + mins + ' min';
+    const hrs = Math.floor(mins / 60), mm = mins % 60;
+    if (hrs < 24) return pre + hrs + ' h' + (mm ? ' ' + mm + ' min' : '');
+    const days = Math.round(hrs / 24);
+    return pre + days + (lang === 'ca' ? (days === 1 ? ' dia' : ' dies') : days === 1 ? ' día' : ' días');
+  }
+
+  /* ---------- Festius i estacions ---------- */
+  function easter(y) {
+    const a = y % 19, b = Math.floor(y / 100), c = y % 100, d = Math.floor(b / 4), e = b % 4;
+    const f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3);
+    const h = (19 * a + b - d - g + 15) % 30, i = Math.floor(c / 4), k = c % 4;
+    const l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451);
+    const month = Math.floor((h + l - 7 * m + 114) / 31), day = ((h + l - 7 * m + 114) % 31) + 1;
+    return new Date(y, month - 1, day);
+  }
+  function holidays(y) {
+    const map = {
+      '01-01': { ca: "Cap d'Any", es: 'Año Nuevo' },
+      '01-06': { ca: 'Reis', es: 'Reyes' },
+      '05-01': { ca: 'Festa del Treball', es: 'Día del Trabajo' },
+      '06-24': { ca: 'Sant Joan', es: 'San Juan' },
+      '08-15': { ca: "L'Assumpció", es: 'La Asunción' },
+      '09-11': { ca: 'Diada de Catalunya', es: 'Diada de Cataluña' },
+      '10-12': { ca: "Festa Nacional d'Espanya", es: 'Fiesta Nacional de España' },
+      '11-01': { ca: 'Tots Sants', es: 'Todos los Santos' },
+      '12-06': { ca: 'Dia de la Constitució', es: 'Día de la Constitución' },
+      '12-08': { ca: 'La Immaculada', es: 'La Inmaculada' },
+      '12-25': { ca: 'Nadal', es: 'Navidad' },
+      '12-26': { ca: 'Sant Esteve', es: 'San Esteban' },
+    };
+    const e = easter(y);
+    const gf = new Date(e); gf.setDate(e.getDate() - 2);
+    const em = new Date(e); em.setDate(e.getDate() + 1);
+    map[`${pad(gf.getMonth() + 1)}-${pad(gf.getDate())}`] = { ca: 'Divendres Sant', es: 'Viernes Santo' };
+    map[`${pad(em.getMonth() + 1)}-${pad(em.getDate())}`] = { ca: 'Dilluns de Pasqua', es: 'Lunes de Pascua' };
+    return map;
+  }
+  function holidayOf(d, lang) {
+    const k = `${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    const hit = holidays(d.getFullYear())[k];
+    return hit ? hit[lang] : null;
+  }
+  function seasonOf(d, lang) {
+    const md = (d.getMonth() + 1) * 100 + d.getDate();
+    let k;
+    if (md >= 1221 || md < 320) k = 3;
+    else if (md < 621) k = 0;
+    else if (md < 923) k = 1;
+    else k = 2;
+    const names = { ca: ['primavera', 'estiu', 'tardor', 'hivern'], es: ['primavera', 'verano', 'otoño', 'invierno'] };
+    return { name: names[lang][k], emoji: ['🌸', '☀️', '🍂', '❄️'][k] };
+  }
+  function momentOf(h, lang) {
+    const k = h >= 5 && h < 12 ? 'm' : h >= 12 && h < 15 ? 'n' : h >= 15 && h < 20 ? 't' : h >= 20 && h < 22 ? 'v' : 'x';
+    const e = { m: '🌅', n: '☀️', t: '🌤️', v: '🌇', x: '🌙' }[k];
+    const n = { ca: { m: 'Matí', n: 'Migdia', t: 'Tarda', v: 'Vespre', x: 'Nit' }, es: { m: 'Mañana', n: 'Mediodía', t: 'Tarde', v: 'Tarde-noche', x: 'Noche' } }[lang][k];
+    return { emoji: e, name: n };
+  }
+  function greeting(h, lang) {
+    if (h >= 5 && h < 13) return lang === 'ca' ? 'Bon dia' : 'Buenos días';
+    if (h >= 13 && h < 21) return lang === 'ca' ? 'Bona tarda' : 'Buenas tardes';
+    return lang === 'ca' ? 'Bona nit' : 'Buenas noches';
+  }
+
+  /* ---------- Zodíac ---------- */
+  const ZODIAC = [
+    { id: 'aries', e: '♈', ca: 'Àries', es: 'Aries', from: [3, 21], to: [4, 19] },
+    { id: 'taurus', e: '♉', ca: 'Taure', es: 'Tauro', from: [4, 20], to: [5, 20] },
+    { id: 'gemini', e: '♊', ca: 'Bessons', es: 'Géminis', from: [5, 21], to: [6, 20] },
+    { id: 'cancer', e: '♋', ca: 'Cranc', es: 'Cáncer', from: [6, 21], to: [7, 22] },
+    { id: 'leo', e: '♌', ca: 'Lleó', es: 'Leo', from: [7, 23], to: [8, 22] },
+    { id: 'virgo', e: '♍', ca: 'Verge', es: 'Virgo', from: [8, 23], to: [9, 22] },
+    { id: 'libra', e: '♎', ca: 'Balança', es: 'Libra', from: [9, 23], to: [10, 22] },
+    { id: 'scorpio', e: '♏', ca: 'Escorpí', es: 'Escorpio', from: [10, 23], to: [11, 21] },
+    { id: 'sagittarius', e: '♐', ca: 'Sagitari', es: 'Sagitario', from: [11, 22], to: [12, 21] },
+    { id: 'capricorn', e: '♑', ca: 'Capricorn', es: 'Capricornio', from: [12, 22], to: [1, 19] },
+    { id: 'aquarius', e: '♒', ca: 'Aquari', es: 'Acuario', from: [1, 20], to: [2, 18] },
+    { id: 'pisces', e: '♓', ca: 'Peixos', es: 'Piscis', from: [2, 19], to: [3, 20] },
+  ];
+  function zodiacOf(month, day) {
+    const v = month * 100 + day;
+    for (const z of ZODIAC) {
+      const a = z.from[0] * 100 + z.from[1], b = z.to[0] * 100 + z.to[1];
+      if (a <= b ? v >= a && v <= b : v >= a || v <= b) return z.id;
+    }
+    return 'aries';
+  }
+  const ZMSG = {
+    ca: ['Avui és un bon dia per somriure a algú.', 'Una petita passejada et pot anar molt bé.', 'Avui pots aprendre alguna cosa nova.', 'Algú pensa en tu amb carinyo.', 'Fes una pausa i beu una mica d\'aigua.', 'Un gest amable avui tornarà a tu.', 'Bon dia per trucar a una persona estimada.', 'Tens més força de la que penses.', 'Avui la paciència et portarà lluny.', 'Escolta la teva música preferida.', 'Un dia tranquil també és un bon dia.', 'Comparteix un riure amb algú.'],
+    es: ['Hoy es un buen día para sonreír a alguien.', 'Un pequeño paseo te puede sentar muy bien.', 'Hoy puedes aprender algo nuevo.', 'Alguien piensa en ti con cariño.', 'Haz una pausa y bebe un poco de agua.', 'Un gesto amable hoy volverá a ti.', 'Buen día para llamar a una persona querida.', 'Tienes más fuerza de la que crees.', 'Hoy la paciencia te llevará lejos.', 'Escucha tu música preferida.', 'Un día tranquilo también es un buen día.', 'Comparte una risa con alguien.'],
+  };
+  function zodiacMessage(id, d, lang) {
+    let hsh = 7;
+    const s = id + ymd(d);
+    for (let i = 0; i < s.length; i++) hsh = (hsh * 31 + s.charCodeAt(i)) >>> 0;
+    return ZMSG[lang][hsh % ZMSG[lang].length];
+  }
+  const PHRASES = {
+    ca: ['Avui faràs un gran dia.', 'Cada pas compta.', 'Estàs fent-ho molt bé.', 'Un somriure canvia el dia.', 'Pots demanar ajuda quan vulguis.', 'Tu ets important.', 'Avui és un dia nou.', 'Tranquil·litat i bon humor.', 'Gràcies per ser com ets.', 'Un dia, un pas.', 'Hi ha gent que et vol molt.', 'Tot va bé, a poc a poc.'],
+    es: ['Hoy harás un gran día.', 'Cada paso cuenta.', 'Lo estás haciendo muy bien.', 'Una sonrisa cambia el día.', 'Puedes pedir ayuda cuando quieras.', 'Tú eres importante.', 'Hoy es un día nuevo.', 'Tranquilidad y buen humor.', 'Gracias por ser como eres.', 'Un día, un paso.', 'Hay gente que te quiere mucho.', 'Todo va bien, poco a poco.'],
+  };
+  function dayPhrase(d, lang) {
+    const doy = Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 86400000);
+    return PHRASES[lang][doy % PHRASES[lang].length];
+  }
+
+  /* ---------- Temps ---------- */
+  function weatherInfo(code, isDay, lang) {
+    const L = (ca, es) => (lang === 'ca' ? ca : es);
+    if (code === 0) return { e: isDay ? '☀️' : '🌙', t: L(isDay ? 'Fa sol' : 'Cel serè', isDay ? 'Hace sol' : 'Cielo despejado') };
+    if (code === 1) return { e: isDay ? '🌤️' : '🌙', t: L('Quasi serè', 'Casi despejado') };
+    if (code === 2) return { e: '⛅', t: L('Mig ennuvolat', 'Medio nublado') };
+    if (code === 3) return { e: '☁️', t: L('Ennuvolat', 'Nublado') };
+    if (code === 45 || code === 48) return { e: '🌫️', t: L('Boira', 'Niebla') };
+    if (code >= 51 && code <= 57) return { e: '🌦️', t: L('Plugim', 'Llovizna') };
+    if (code >= 61 && code <= 67) return { e: '🌧️', t: L('Plou', 'Llueve') };
+    if (code >= 71 && code <= 77) return { e: '❄️', t: L('Neva', 'Nieva') };
+    if (code >= 80 && code <= 82) return { e: '🌧️', t: L('Ruixats', 'Chubascos') };
+    if (code === 85 || code === 86) return { e: '🌨️', t: L('Ruixats de neu', 'Chubascos de nieve') };
+    if (code >= 95) return { e: '⛈️', t: L('Tempesta', 'Tormenta') };
+    return { e: '🌡️', t: L('Temps variable', 'Tiempo variable') };
+  }
+  function outfit(temp, rainProb, lang) {
+    const L = (ca, es) => (lang === 'ca' ? ca : es);
+    const out = [];
+    if (temp < 8) out.push({ e: '🧥', t: L('Abric gruixut', 'Abrigo grueso') }, { e: '🧣', t: L('Bufanda i guants', 'Bufanda y guantes') });
+    else if (temp < 15) out.push({ e: '🧥', t: L('Jaqueta', 'Chaqueta') }, { e: '👖', t: L('Pantalons llargs', 'Pantalones largos') });
+    else if (temp < 21) out.push({ e: '🧶', t: L('Jersei lleuger', 'Jersey ligero') });
+    else if (temp < 27) out.push({ e: '👕', t: L('Samarreta', 'Camiseta') });
+    else out.push({ e: '🩳', t: L('Roba fresca', 'Ropa fresca') }, { e: '🧢', t: L('Gorra', 'Gorra') }, { e: '🧴', t: L('Crema solar', 'Crema solar') });
+    if (rainProb >= 50) out.push({ e: '☂️', t: L('Paraigua', 'Paraguas') });
+    if (temp >= 30) out.push({ e: '💧', t: L("Beu aigua", 'Bebe agua') });
+    return out;
+  }
+
+  /* ---------- Intèrpret de frases d'agenda ---------- */
+  const FROM = 'àáâäèéêëìíîïòóôöùúûüçñ’‘';
+  const TO = "aaaaeeeeiiiioooouuuucn''";
+  function norm(s) {
+    s = s.toLowerCase();
+    let o = '';
+    for (let i = 0; i < s.length; i++) {
+      const k = FROM.indexOf(s[i]);
+      o += k >= 0 ? TO[k] : s[i];
+    }
+    return o;
+  }
+  const NUMW = { una: 1, un: 1, dues: 2, dos: 2, tres: 3, quatre: 4, cuatro: 4, cinc: 5, cinco: 5, sis: 6, seis: 6, set: 7, siete: 7, vuit: 8, ocho: 8, nou: 9, nueve: 9, deu: 10, diez: 10, onze: 11, once: 11, dotze: 12, doce: 12, vint: 20, veinte: 20, 'vint-i-cinc': 25, veinticinco: 25, mitja: 30, media: 30, quart: 15, cuarto: 15 };
+  const val = (w) => (/^\d+$/.test(w) ? parseInt(w, 10) : NUMW[w]);
+  const WDAY = { diumenge: 0, dilluns: 1, dimarts: 2, dimecres: 3, dijous: 4, divendres: 5, dissabte: 6, domingo: 0, lunes: 1, martes: 2, miercoles: 3, jueves: 4, viernes: 5, sabado: 6 };
+  const MON = { gener: 0, febrer: 1, marc: 2, abril: 3, maig: 4, juny: 5, juliol: 6, agost: 7, setembre: 8, octubre: 9, novembre: 10, desembre: 11, enero: 0, febrero: 1, marzo: 2, mayo: 4, junio: 5, julio: 6, agosto: 7, septiembre: 8, setiembre: 8, noviembre: 10, diciembre: 11 };
+  const HW = '(\\d{1,2}|una|un|dues|dos|tres|quatre|cuatro|cinc|cinco|sis|seis|set|siete|vuit|ocho|nou|nueve|deu|diez|onze|once|dotze|doce)';
+  const MW = '(mitja|media|quart|cuarto|cinc|cinco|deu|diez|vint-i-cinc|veinticinco|vint|veinte|\\d{1,2})';
+  const PARTS = { mati: ['am', 10], matinada: ['am', 6], madrugada: ['am', 6], manana: ['am', 10], migdia: ['noon', 12], mediodia: ['noon', 12], tarda: ['pm', 16], tarde: ['pm', 16], vespre: ['pm', 20], nit: ['pm', 22], noche: ['pm', 22] };
+
+  function parseEvent(text, now = new Date()) {
+    const orig = String(text).normalize('NFC').trim();
+    let n = norm(orig);
+    const spans = [];
+    const mask = (m, off = 0) => {
+      const s = m.index + off, e = m.index + m[0].length;
+      spans.push([s, e]);
+      n = n.slice(0, s) + ' '.repeat(e - s) + n.slice(e);
+    };
+    const res = { title: '', ts: null, hasDate: false, hasTime: false, needsTime: false };
+    let m;
+
+    // 1) Relatiu: "d'aquí a 20 minuts", "en 2 horas"
+    m = n.match(/\b(?:d'aqui\s+a|dentro\s+de|en)\s+(\d{1,3})\s+(minuts?|minutos?|min|hores?|horas?)\b/);
+    if (m) {
+      const k = parseInt(m[1], 10);
+      const mult = /^h/.test(m[2]) ? 3600000 : 60000;
+      mask(m);
+      res.ts = now.getTime() + k * mult;
+      res.hasDate = res.hasTime = true;
+      res.title = cleanTitle(orig, spans);
+      return res;
+    }
+
+    // 2) Part del dia ("al migdia", "de la tarda"...)
+    let part = null;
+    m = n.match(/\b(?:de|a|por|en|per|al|del)\s+(?:la\s+|l')?(mati|matinada|migdia|mediodia|tarda|tarde|vespre|nit|noche|manana|madrugada)\b/);
+    if (m) { part = PARTS[m[1]]; mask(m); }
+
+    // 3) Hora
+    let hh = null, mm = 0;
+    m = n.match(new RegExp(`\\b(?:a\\s+(?:les|las|la)\\s+)?(un|dos|tres)\\s+quarts?\\s+(?:d'|de\\s+)${HW}\\b`));
+    if (m) {
+      const q = val(m[1]), base = val(m[2]);
+      hh = base === 1 ? 12 : base - 1;
+      mm = q * 15;
+      mask(m);
+    }
+    if (hh === null) {
+      m = n.match(/\b(?:(?:a\s+(?:les|las|la)|sobre\s+(?:les|las))\s+)?(\d{1,2})\s*[:.h]\s*(\d{2})\b/);
+      if (m && parseInt(m[1], 10) < 24 && parseInt(m[2], 10) < 60) { hh = parseInt(m[1], 10); mm = parseInt(m[2], 10); mask(m); }
+    }
+    if (hh === null) {
+      m = n.match(new RegExp(`\\b(?:a\\s+(?:les|las|la)|sobre\\s+(?:les|las))\\s+${HW}\\b(?:\\s*(?:h|hores|horas)\\b)?(?:\\s+en\\s+punt[o]?)?(?:\\s+(i|y)\\s+${MW}\\b)?(?:\\s+(menys|menos)\\s+${MW}\\b)?`));
+      if (m && val(m[1]) !== undefined) {
+        hh = val(m[1]);
+        if (m[2]) mm = val(m[3]) || 0;
+        if (m[4]) { const k = val(m[5]) || 0; hh -= 1; mm = 60 - k; if (hh < 0) hh = 23; }
+        mask(m);
+      }
+    }
+    if (hh === null) {
+      m = n.match(/\b(\d{1,2})\s*h\b/);
+      if (m && parseInt(m[1], 10) < 24) { hh = parseInt(m[1], 10); mask(m); }
+    }
+    if (hh !== null) {
+      if (hh > 12 || hh === 0) { /* 24 h */ }
+      else if (part) {
+        const hint = part[0];
+        if (hint === 'pm' && hh < 12) hh += 12;
+        else if (hint === 'noon' && hh < 6) hh += 12;
+        else if (hint === 'am' && hh === 12) hh = 0;
+        else if (hint === 'pm' && hh === 12 && part[1] === 22) hh = 0;
+      } else if (hh >= 1 && hh <= 6) hh += 12; // "a les 5" → 17:00
+      res.hasTime = true;
+    } else if (part) {
+      hh = part[1]; mm = 0; res.hasTime = true;
+    }
+
+    // 4) Data
+    let date = null;
+    m = n.match(/\b(?:dema\s+passat|pasado\s+manana)\b/);
+    if (m) { date = startOfDay(now); date.setDate(date.getDate() + 2); mask(m); }
+    if (!date) {
+      m = n.match(/\b(dema|manana)\b/);
+      if (m) { date = startOfDay(now); date.setDate(date.getDate() + 1); mask(m); }
+    }
+    if (!date) {
+      m = n.match(/\b(avui|hoy)\b/);
+      if (m) { date = startOfDay(now); mask(m); }
+    }
+    if (!date) {
+      m = n.match(/\b(?:el\s+|este\s+|aquest\s+|proper\s+|proximo\s+)?(dilluns|dimarts|dimecres|dijous|divendres|dissabte|diumenge|lunes|martes|miercoles|jueves|viernes|sabado|domingo)\b(?:\s+(?:que\s+ve|vinent|proper|proximo|que\s+viene))?/);
+      if (m) {
+        const wd = WDAY[m[1]];
+        date = startOfDay(now);
+        let add = (wd - date.getDay() + 7) % 7;
+        if (add === 0) {
+          const t = new Date(date); t.setHours(hh ?? 23, mm, 0, 0);
+          if (t.getTime() <= now.getTime()) add = 7;
+        }
+        date.setDate(date.getDate() + add);
+        mask(m);
+      }
+    }
+    if (!date) {
+      m = n.match(/\b(?:el\s+)?(?:dia\s+)?(\d{1,2})\s*(?:d'|de\s+|del\s+)?\s*(gener|febrer|marc|abril|maig|juny|juliol|agost|setembre|octubre|novembre|desembre|enero|febrero|marzo|mayo|junio|julio|agosto|septiembre|setiembre|noviembre|diciembre)\b/);
+      if (m) {
+        const dd = parseInt(m[1], 10);
+        date = new Date(now.getFullYear(), MON[m[2]], dd);
+        if (date < startOfDay(now)) date = new Date(now.getFullYear() + 1, MON[m[2]], dd);
+        mask(m);
+      }
+    }
+    if (!date) {
+      m = n.match(/\b(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?\b/);
+      if (m) {
+        let y = m[3] ? parseInt(m[3], 10) : now.getFullYear();
+        if (y < 100) y += 2000;
+        date = new Date(y, parseInt(m[2], 10) - 1, parseInt(m[1], 10));
+        if (!m[3] && date < startOfDay(now)) date = new Date(y + 1, date.getMonth(), date.getDate());
+        mask(m);
+      }
+    }
+    if (!date) {
+      m = n.match(/\b(?:el\s+)?dia\s+(\d{1,2})\b/);
+      if (m) {
+        const dd = parseInt(m[1], 10);
+        date = new Date(now.getFullYear(), now.getMonth(), dd);
+        if (date < startOfDay(now)) date = new Date(now.getFullYear(), now.getMonth() + 1, dd);
+        mask(m);
+      }
+    }
+    if (date) res.hasDate = true;
+
+    if (res.hasTime && !date) {
+      date = startOfDay(now);
+      const t = new Date(date); t.setHours(hh, mm, 0, 0);
+      if (t.getTime() <= now.getTime()) date.setDate(date.getDate() + 1);
+    }
+    if (date) {
+      if (!res.hasTime) { hh = 10; mm = 0; res.needsTime = true; }
+      date.setHours(hh, mm, 0, 0);
+      res.ts = date.getTime();
+    }
+    res.title = cleanTitle(orig, spans);
+    return res;
+  }
+
+  function cleanTitle(orig, spans) {
+    let t = orig;
+    [...spans].sort((a, b) => b[0] - a[0]).forEach(([s, e]) => { t = t.slice(0, s) + ' ' + t.slice(e); });
+    t = t.replace(/^\s*(recorda['’]m(?:e)?|recuerdame|recuérdame|apunta['’]m(?:e)?|apunta)\s+(que\s+)?/i, '');
+    t = t.replace(/\s+/g, ' ');
+    for (let i = 0; i < 4; i++) t = t.replace(/(?:^|\s)(?:a|el|la|les|las|dia|de|d'|del|per|por|en|al|que|y|i)\s*$/i, '');
+    t = t.replace(/[,;.\s]+$/, '').replace(/^[,;.\s]+/, '').trim();
+    return cap(t);
+  }
+
+  function guessIcon(title) {
+    const t = norm(title);
+    if (/metge|medic|doctor|hospital|cap\b|ambulatori|cita medica/.test(t)) return '🩺';
+    if (/dentista/.test(t)) return '🦷';
+    if (/aniversari|cumple|festa|fiesta/.test(t)) return '🎂';
+    if (/tieta|tieto|avia|avi\b|abuela|abuelo|tia\b|tio\b|visit|familia|germa|hermano|hermana/.test(t)) return '👪';
+    if (/compr|super|mercat|supermercado/.test(t)) return '🛒';
+    if (/bus|tren|metro|autobus|viatge|viaje/.test(t)) return '🚌';
+    if (/futbol|partit|partido|esport|deporte|gimnas|pavello/.test(t)) return '⚽';
+    if (/cine|pel·licula|pelicula|teatre|teatro|concert/.test(t)) return '🎭';
+    if (/fisio|rehab/.test(t)) return '💆';
+    if (/perruqu|peluquer/.test(t)) return '💇';
+    if (/trucar|llamar|telefon/.test(t)) return '📞';
+    return '📅';
+  }
+
+  /* ---------- Avisos: què toca avisar ara ---------- */
+  function medsToday(S, nowMs) {
+    const out = [];
+    const day0 = startOfDay(new Date(nowMs));
+    for (const med of S.meds || []) {
+      if (med.days && med.days.length && !med.days.includes(day0.getDay())) continue;
+      for (const t of med.times || []) {
+        const [hh, mm] = t.split(':').map(Number);
+        const d = new Date(day0); d.setHours(hh, mm, 0, 0);
+        const key = `med|${med.id}|${ymd(d)}|${t}`;
+        const ts = d.getTime();
+        let status;
+        if (S.taken && S.taken[key]) status = 'taken';
+        else if (nowMs >= ts && nowMs < ts + 3 * 3600000) status = 'due';
+        else if (nowMs >= ts + 3 * 3600000) status = 'missed';
+        else status = 'upcoming';
+        out.push({ key, med, time: t, ts, status });
+      }
+    }
+    return out.sort((a, b) => a.ts - b.ts);
+  }
+
+  function computeDue(S, nowMs) {
+    const out = [];
+    const snoozed = (k) => S.snooze && S.snooze[k] && S.snooze[k] > nowMs;
+    for (const e of S.events || []) {
+      const key = 'ev|' + e.id;
+      if (S.acked && S.acked[key]) continue;
+      const lead = (e.lead == null ? 30 : e.lead) * 60000;
+      if (nowMs >= e.ts - lead && nowMs < e.ts + 90 * 60000 && !snoozed(key)) {
+        out.push({ key, kind: 'event', id: e.id, title: e.title, ts: e.ts, icon: e.icon || '📅' });
+      }
+    }
+    for (const dose of medsToday(S, nowMs)) {
+      if (dose.status === 'due' && !snoozed(dose.key)) {
+        out.push({ key: dose.key, kind: 'med', id: dose.med.id, title: dose.med.name, ts: dose.ts, icon: dose.med.icon || '💊', photo: dose.med.photo });
+      }
+    }
+    if (S.timer && nowMs >= S.timer.endTs && !(S.acked && S.acked['timer|' + S.timer.endTs])) {
+      out.push({ key: 'timer|' + S.timer.endTs, kind: 'timer', title: S.timer.label || '', ts: S.timer.endTs, icon: '⏳' });
+    }
+    return out.sort((a, b) => a.ts - b.ts);
+  }
+
+  function yesNoFrom(text, lang) {
+    const t = norm(text || '');
+    if (/\b(no|cancel|cancela|nada|mal)\b/.test(t)) return false;
+    if (/\b(si|vale|d'acord|de acuerdo|ok|correcte|correcto|exacte|exacto|bé|be|bien|endavant|adelante)\b/.test(t)) return true;
+    return null;
+  }
+
+  return { DAYS, MONTHS, HN, pad, ymd, cap, h12, startOfDay, speakTime, atTimeWords, speakDate, dateLong, dayMonth, monthDe, dayWord, whenWords, countdown, easter, holidays, holidayOf, seasonOf, momentOf, greeting, ZODIAC, zodiacOf, zodiacMessage, dayPhrase, weatherInfo, outfit, norm, parseEvent, guessIcon, medsToday, computeDue, yesNoFrom };
+})();
+if (typeof module !== 'undefined') module.exports = Core;
+
+/* ============================================================
+   MOTOR: estat, veu, pictogrames, components i avisos
+   ============================================================ */
+const KEY = 'andromines-el-meu-tauler-v1';
+
+/* ---------- Catàlegs (emoji + paraula clau per a ARASAAC) ---------- */
+const BLOCKS = {
+  clock:    { c: '#1d4ed8', ic: '🕒', ca: 'Rellotge', es: 'Reloj' },
+  today:    { c: '#0e7490', ic: '📆', ca: 'Avui', es: 'Hoy' },
+  agenda:   { c: '#c2410c', ic: '🗓️', ca: 'Agenda', es: 'Agenda' },
+  meds:     { c: '#b91c1c', ic: '💊', ca: 'Medicació', es: 'Medicación' },
+  weather:  { c: '#0369a1', ic: '🌦️', ca: 'Temps', es: 'Tiempo' },
+  routines: { c: '#6d28d9', ic: '✅', ca: 'Rutines', es: 'Rutinas' },
+  mood:     { c: '#be185d', ic: '😊', ca: 'Com em sento', es: 'Cómo me siento' },
+  contacts: { c: '#15803d', ic: '📞', ca: 'Les meves persones', es: 'Mis personas' },
+  sports:   { c: '#4d7c0f', ic: '⚽', ca: 'Esports', es: 'Deportes' },
+  music:    { c: '#a21caf', ic: '🎵', ca: 'Música', es: 'Música' },
+  zodiac:   { c: '#4338ca', ic: '✨', ca: 'Horòscop', es: 'Horóscopo' },
+  timer:    { c: '#b45309', ic: '⏳', ca: 'Temporitzador', es: 'Temporizador' },
+};
+const ALL_BLOCKS = Object.keys(BLOCKS);
+const MODES = {
+  1: { blocks: ['clock', 'today', 'agenda', 'meds'], perms: { board: false, events: false, likes: false, contacts: false }, scale: 2 },
+  2: { blocks: ['clock', 'today', 'agenda', 'meds', 'weather', 'routines', 'mood', 'contacts', 'sports', 'music'], perms: { board: true, events: true, likes: true, contacts: false }, scale: 1 },
+  3: { blocks: ALL_BLOCKS.slice(), perms: { board: true, events: true, likes: true, contacts: true }, scale: 0 },
+};
+const SPORTS = [
+  { id: 'futbol', e: '⚽', ca: 'Futbol', es: 'Fútbol', kw: { ca: 'futbol', es: 'fútbol' }, sdb: 'Soccer' },
+  { id: 'basquet', e: '🏀', ca: 'Bàsquet', es: 'Baloncesto', kw: { ca: 'bàsquet', es: 'baloncesto' }, sdb: 'Basketball' },
+  { id: 'handbol', e: '🤾', ca: 'Handbol', es: 'Balonmano', kw: { ca: 'handbol', es: 'balonmano' }, sdb: 'Handball' },
+  { id: 'tennis', e: '🎾', ca: 'Tennis', es: 'Tenis', kw: { ca: 'tennis', es: 'tenis' } },
+  { id: 'padel', e: '🏓', ca: 'Pàdel', es: 'Pádel', kw: { ca: 'pàdel', es: 'pádel' } },
+  { id: 'natacio', e: '🏊', ca: 'Natació', es: 'Natación', kw: { ca: 'natació', es: 'natación' } },
+  { id: 'ciclisme', e: '🚴', ca: 'Ciclisme', es: 'Ciclismo', kw: { ca: 'ciclisme', es: 'ciclismo' } },
+  { id: 'atletisme', e: '🏃', ca: 'Atletisme', es: 'Atletismo', kw: { ca: 'córrer', es: 'correr' } },
+  { id: 'f1', e: '🏎️', ca: 'Fórmula 1', es: 'Fórmula 1', kw: { ca: 'cotxe de carreres', es: 'coche de carreras' } },
+  { id: 'motos', e: '🏍️', ca: 'Motociclisme', es: 'Motociclismo', kw: { ca: 'moto', es: 'moto' } },
+  { id: 'golf', e: '⛳', ca: 'Golf', es: 'Golf', kw: { ca: 'golf', es: 'golf' } },
+  { id: 'rugbi', e: '🏉', ca: 'Rugbi', es: 'Rugby', kw: { ca: 'rugbi', es: 'rugby' } },
+  { id: 'hoquei', e: '🏒', ca: 'Hoquei', es: 'Hockey', kw: { ca: 'hoquei', es: 'hockey' } },
+  { id: 'esqui', e: '⛷️', ca: 'Esquí', es: 'Esquí', kw: { ca: 'esquiar', es: 'esquiar' } },
+  { id: 'excursio', e: '🥾', ca: 'Excursionisme', es: 'Senderismo', kw: { ca: 'caminar', es: 'caminar' } },
+  { id: 'volei', e: '🏐', ca: 'Vòlei', es: 'Voleibol', kw: { ca: 'vòlei', es: 'voleibol' } },
+];
+const TEAMS = {
+  futbol: [
+    { name: 'FC Barcelona', id: '133739' }, { name: 'FC Barcelona Femení', id: '144766' },
+    { name: 'RCD Espanyol', q: 'Espanyol' }, { name: 'Girona FC', q: 'Girona' }, { name: 'Real Madrid', q: 'Real Madrid' },
+    { name: 'Atlético de Madrid', q: 'Atletico Madrid' }, { name: 'València CF', q: 'Valencia' }, { name: 'Athletic Club', q: 'Athletic Bilbao' },
+    { name: 'Real Betis', q: 'Real Betis' }, { name: 'Sevilla FC', q: 'Sevilla' }, { name: 'Real Sociedad', q: 'Real Sociedad' }, { name: 'Villarreal CF', q: 'Villarreal' },
+  ],
+  basquet: [{ name: 'FC Barcelona Bàsquet', q: 'Barcelona' }, { name: 'Real Madrid Bàsquet', q: 'Real Madrid' }, { name: 'Joventut Badalona', q: 'Joventut' }, { name: 'Baskonia', q: 'Baskonia' }],
+  handbol: [{ name: 'FC Barcelona Handbol', q: 'Barcelona' }],
+};
+const MUSIC = [
+  { id: 'pop', e: '🎤', ca: 'Pop', es: 'Pop', kw: { ca: 'cantar', es: 'cantar' } },
+  { id: 'rock', e: '🎸', ca: 'Rock', es: 'Rock', kw: { ca: 'guitarra', es: 'guitarra' } },
+  { id: 'classica', e: '🎻', ca: 'Clàssica', es: 'Clásica', kw: { ca: 'violí', es: 'violín' } },
+  { id: 'rumba', e: '🥁', ca: 'Rumba catalana', es: 'Rumba catalana', kw: { ca: 'tambor', es: 'tambor' } },
+  { id: 'sardanes', e: '💃', ca: 'Sardanes', es: 'Sardanas', kw: { ca: 'ballar', es: 'bailar' } },
+  { id: 'havaneres', e: '⛵', ca: 'Havaneres', es: 'Habaneras', kw: { ca: 'vaixell', es: 'barco' } },
+  { id: 'jazz', e: '🎷', ca: 'Jazz', es: 'Jazz', kw: { ca: 'saxòfon', es: 'saxofón' } },
+  { id: 'infantil', e: '🧸', ca: 'Cançons infantils', es: 'Canciones infantiles', kw: { ca: 'osset', es: 'osito' } },
+  { id: 'reggaeton', e: '🔊', ca: 'Reggaeton', es: 'Reggaeton', kw: { ca: 'altaveu', es: 'altavoz' } },
+  { id: 'country', e: '🤠', ca: 'Country', es: 'Country', kw: { ca: 'barret', es: 'sombrero' } },
+  { id: 'electronica', e: '🎧', ca: 'Electrònica', es: 'Electrónica', kw: { ca: 'auriculars', es: 'auriculares' } },
+  { id: 'flamenc', e: '🪭', ca: 'Flamenc', es: 'Flamenco', kw: { ca: 'guitarra', es: 'guitarra' } },
+];
+const MOODS = [
+  { id: 5, e: '😄', ca: 'Molt bé', es: 'Muy bien', kw: { ca: 'content', es: 'contento' } },
+  { id: 4, e: '🙂', ca: 'Bé', es: 'Bien', kw: { ca: 'tranquil', es: 'tranquilo' } },
+  { id: 3, e: '😐', ca: 'Normal', es: 'Normal', kw: { ca: 'normal', es: 'normal' } },
+  { id: 2, e: '😟', ca: 'Trist', es: 'Triste', kw: { ca: 'trist', es: 'triste' } },
+  { id: 1, e: '😠', ca: 'Enfadat/da', es: 'Enfadado/a', kw: { ca: 'enfadat', es: 'enfadado' } },
+  { id: 0, e: '🤒', ca: 'No em trobo bé', es: 'No me encuentro bien', kw: { ca: 'malalt', es: 'enfermo' } },
+];
+const ACTIONS = [
+  { id: 'wake', e: '🛏️', ca: 'Llevar-me', es: 'Levantarme', kw: { ca: 'llevar-se', es: 'levantarse' } },
+  { id: 'wash', e: '🧼', ca: 'Rentar-me la cara', es: 'Lavarme la cara', kw: { ca: 'rentar-se la cara', es: 'lavarse la cara' } },
+  { id: 'shower', e: '🚿', ca: 'Dutxar-me', es: 'Ducharme', kw: { ca: 'dutxar-se', es: 'ducharse' } },
+  { id: 'dress', e: '👕', ca: 'Vestir-me', es: 'Vestirme', kw: { ca: 'vestir-se', es: 'vestirse' } },
+  { id: 'breakfast', e: '🥣', ca: 'Esmorzar', es: 'Desayunar', kw: { ca: 'esmorzar', es: 'desayunar' } },
+  { id: 'teeth', e: '🪥', ca: 'Raspallar-me les dents', es: 'Cepillarme los dientes', kw: { ca: 'raspallar-se les dents', es: 'cepillarse los dientes' } },
+  { id: 'comb', e: '💇', ca: 'Pentinar-me', es: 'Peinarme', kw: { ca: 'pentinar-se', es: 'peinarse' } },
+  { id: 'shoes', e: '👟', ca: 'Posar-me les sabates', es: 'Ponerme los zapatos', kw: { ca: 'sabates', es: 'zapatos' } },
+  { id: 'keys', e: '🔑', ca: 'Agafar les claus', es: 'Coger las llaves', kw: { ca: 'claus', es: 'llaves' } },
+  { id: 'bag', e: '🎒', ca: 'Agafar la motxilla', es: 'Coger la mochila', kw: { ca: 'motxilla', es: 'mochila' } },
+  { id: 'bus', e: '🚌', ca: 'Anar en bus', es: 'Ir en autobús', kw: { ca: 'autobús', es: 'autobús' } },
+  { id: 'work', e: '💼', ca: 'Anar a la feina', es: 'Ir al trabajo', kw: { ca: 'treballar', es: 'trabajar' } },
+  { id: 'lunch', e: '🍽️', ca: 'Dinar', es: 'Comer', kw: { ca: 'dinar', es: 'comer' } },
+  { id: 'snack', e: '🍎', ca: 'Berenar', es: 'Merendar', kw: { ca: 'berenar', es: 'merendar' } },
+  { id: 'dinner', e: '🍲', ca: 'Sopar', es: 'Cenar', kw: { ca: 'sopar', es: 'cenar' } },
+  { id: 'pills', e: '💊', ca: 'Prendre la medicació', es: 'Tomar la medicación', kw: { ca: 'pastilla', es: 'pastilla' } },
+  { id: 'water', e: '💧', ca: 'Beure aigua', es: 'Beber agua', kw: { ca: 'beure aigua', es: 'beber agua' } },
+  { id: 'toilet', e: '🚻', ca: 'Anar al lavabo', es: 'Ir al baño', kw: { ca: 'lavabo', es: 'baño' } },
+  { id: 'walk', e: '🚶', ca: 'Passejar', es: 'Pasear', kw: { ca: 'passejar', es: 'pasear' } },
+  { id: 'tidy', e: '🧹', ca: 'Endreçar', es: 'Ordenar', kw: { ca: 'endreçar', es: 'ordenar' } },
+  { id: 'laundry', e: '🧺', ca: 'Roba bruta al cistell', es: 'Ropa sucia al cesto', kw: { ca: 'roba', es: 'ropa' } },
+  { id: 'shop', e: '🛒', ca: 'Fer la compra', es: 'Hacer la compra', kw: { ca: 'comprar', es: 'comprar' } },
+  { id: 'tv', e: '📺', ca: 'Mirar la tele', es: 'Ver la tele', kw: { ca: 'televisió', es: 'televisión' } },
+  { id: 'read', e: '📖', ca: 'Llegir', es: 'Leer', kw: { ca: 'llegir', es: 'leer' } },
+  { id: 'pj', e: '🌙', ca: 'Posar-me el pijama', es: 'Ponerme el pijama', kw: { ca: 'pijama', es: 'pijama' } },
+  { id: 'sleep', e: '😴', ca: 'Anar a dormir', es: 'Ir a dormir', kw: { ca: 'dormir', es: 'dormir' } },
+];
+const actionById = (id) => ACTIONS.find((a) => a.id === id);
+const COLORS = {
+  blau:    { ca: 'Blau', es: 'Azul', face: '#eff6ff', ink: '#0f172a', acc: '#1d4ed8' },
+  verd:    { ca: 'Verd', es: 'Verde', face: '#ecfdf5', ink: '#052e16', acc: '#15803d' },
+  vermell: { ca: 'Vermell', es: 'Rojo', face: '#fef2f2', ink: '#450a0a', acc: '#b91c1c' },
+  taronja: { ca: 'Taronja', es: 'Naranja', face: '#fff7ed', ink: '#431407', acc: '#c2410c' },
+  lila:    { ca: 'Lila', es: 'Lila', face: '#f5f3ff', ink: '#2e1065', acc: '#6d28d9' },
+  rosa:    { ca: 'Rosa', es: 'Rosa', face: '#fdf2f8', ink: '#500724', acc: '#be185d' },
+  groc:    { ca: 'Groc', es: 'Amarillo', face: '#fef9c3', ink: '#1c1917', acc: '#a16207' },
+  negre:   { ca: 'Negre', es: 'Negro', face: '#111827', ink: '#f9fafb', acc: '#facc15' },
+};
+
+/* ---------- Estat ---------- */
+const DEF = () => ({
+  v: 1, setup: false, lang: 'ca', name: '', birthday: '', mode: 2, pin: null,
+  theme: { contrast: 'normal', scale: 1, dys: false, picto: true, calm: false },
+  voice: { rate: 0.85, repeatMin: 5 },
+  keepAwake: false,
+  allowed: MODES[2].blocks.slice(), on: MODES[2].blocks.slice(), perms: { ...MODES[2].perms },
+  clock: { kind: 'analog', color: 'blau', shape: 'round', seconds: false },
+  sports: { picked: [], teams: [] }, music: { styles: [], artists: [] }, zodiac: '',
+  events: [], meds: [], taken: {}, acked: {}, snooze: {},
+  routines: [], routDone: {}, contacts: [], mood: [], help: { name: '', phone: '' }, timer: null,
+});
+function deepMerge(a, b) {
+  if (Array.isArray(a) || typeof a !== 'object' || a === null) return b === undefined ? a : b;
+  const o = { ...a };
+  if (b && typeof b === 'object') for (const k of Object.keys(b)) o[k] = k in a ? deepMerge(a[k], b[k]) : b[k];
+  return o;
+}
+function loadState() {
+  try {
+    const j = JSON.parse(localStorage.getItem(KEY));
+    if (j && j.v === 1) return deepMerge(DEF(), j);
+  } catch (e) { /* res */ }
+  return DEF();
+}
+let S = loadState();
+let saveTimer = null;
+function save() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    try { localStorage.setItem(KEY, JSON.stringify(S)); }
+    catch (e) { toast(T('No hi ha prou espai per guardar. Treu alguna foto.', 'No hay espacio para guardar. Quita alguna foto.')); }
+  }, 120);
+}
+const T = (ca, es) => (S.lang === 'es' ? es : ca);
+const L = (o) => (o && typeof o === 'object' ? o[S.lang] || o.ca : o);
+const uid = () => Math.random().toString(36).slice(2, 9);
+const $ = (s, r = document) => r.querySelector(s);
+
+function h(tag, props, ...kids) {
+  const el = document.createElement(tag);
+  if (props) for (const k of Object.keys(props)) {
+    const v = props[k];
+    if (v == null || v === false) continue;
+    if (k === 'class') el.className = v;
+    else if (k === 'style') el.style.cssText = v;
+    else if (k.startsWith('on')) el.addEventListener(k.slice(2), v);
+    else if (v === true) el.setAttribute(k, '');
+    else el.setAttribute(k, v);
+  }
+  for (const c of kids.flat(Infinity)) {
+    if (c == null || c === false) continue;
+    el.append(c.nodeType ? c : document.createTextNode(String(c)));
+  }
+  return el;
+}
+function toast(msg, ms = 3200) {
+  const t = h('div', { class: 'toast', role: 'status' }, msg);
+  document.body.append(t);
+  setTimeout(() => t.remove(), ms);
+}
+
+/* ---------- Aparença ---------- */
+function applyTheme() {
+  const r = document.documentElement;
+  r.dataset.theme = S.theme.contrast === 'alt' ? 'alt' : 'normal';
+  r.dataset.font = S.theme.dys ? 'dys' : 'std';
+  r.classList.toggle('calm', !!S.theme.calm);
+  r.classList.remove('m1', 'm2', 'm3');
+  r.classList.add('m' + S.mode);
+  r.lang = S.lang;
+  const scale = [18, 21, 25][S.theme.scale] || 18;
+  r.style.setProperty('--fs', scale + 'px');
+}
+
+/* ---------- Veu: parlar i escoltar ---------- */
+const Voice = {
+  voices: [],
+  unlocked: false,
+  ok: 'speechSynthesis' in window,
+  recOK: !!(window.SpeechRecognition || window.webkitSpeechRecognition),
+  init() {
+    if (!this.ok) return;
+    const load = () => { this.voices = speechSynthesis.getVoices(); };
+    load();
+    speechSynthesis.addEventListener && speechSynthesis.addEventListener('voiceschanged', load);
+  },
+  code(lang) { return lang === 'es' ? 'es-ES' : 'ca-ES'; },
+  has(lang) { return this.voices.some((v) => v.lang.toLowerCase().replace('_', '-').startsWith(lang)); },
+  pick(lang) {
+    const c = this.voices.filter((v) => v.lang.toLowerCase().replace('_', '-').startsWith(lang));
+    return c.find((v) => v.localService) || c[0] || null;
+  },
+  stop() { if (this.ok) try { speechSynthesis.cancel(); } catch (e) { /* res */ } },
+  speak(text, lang = S.lang) {
+    return new Promise((resolve) => {
+      if (!this.ok || !text) return resolve();
+      try {
+        speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = this.code(lang);
+        const v = this.pick(lang);
+        if (v) u.voice = v;
+        u.rate = S.voice.rate;
+        let done = false;
+        const fin = () => { if (!done) { done = true; resolve(); } };
+        u.onend = fin; u.onerror = fin;
+        setTimeout(fin, Math.max(2500, (text.length * 110) / S.voice.rate + 1500));
+        speechSynthesis.speak(u);
+      } catch (e) { resolve(); }
+    });
+  },
+  listen(lang = S.lang) {
+    return new Promise((resolve, reject) => {
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SR) return reject(new Error('unsupported'));
+      const r = new SR();
+      r.lang = this.code(lang);
+      r.interimResults = false;
+      r.maxAlternatives = 3;
+      let got = null;
+      r.onresult = (e) => { got = Array.from(e.results[0]).map((a) => a.transcript); };
+      r.onerror = (e) => reject(new Error(e.error || 'error'));
+      r.onend = () => resolve(got);
+      this.current = r;
+      try { r.start(); } catch (e) { reject(e); }
+    });
+  },
+  stopListen() { try { this.current && this.current.stop(); } catch (e) { /* res */ } },
+};
+const say = (text, lang) => Voice.speak(text, lang);
+
+/* Micròfon: obre una pantalla "t'escolto" i retorna el text (o null) */
+function askByVoice(prompt) {
+  return new Promise((resolve) => {
+    if (!Voice.recOK) { toast(T('Aquest navegador no té micròfon. Fes servir Chrome.', 'Este navegador no tiene micrófono. Usa Chrome.')); return resolve(null); }
+    const ov = h('div', { class: 'sheet', style: 'z-index:85;justify-content:center;align-items:center;text-align:center;padding:24px;gap:14px' });
+    const msg = h('h2', null, prompt || T('Parla ara…', 'Habla ahora…'));
+    const sub = h('p', { class: 'muted' }, T('T\'estic escoltant', 'Te estoy escuchando'));
+    const stop = h('button', { class: 'btn alt big', onclick: () => { Voice.stopListen(); } }, '✔ ' + T('Ja he acabat', 'Ya he terminado'));
+    const cancel = h('button', { class: 'btn alt', onclick: () => { finished = true; Voice.stopListen(); ov.remove(); resolve(null); } }, T('Cancel·la', 'Cancela'));
+    ov.append(msg, h('div', { class: 'mic-pulse', 'aria-hidden': 'true' }, '🎤'), sub, stop, cancel);
+    document.body.append(ov);
+    let finished = false;
+    Voice.stop();
+    Voice.listen().then((alts) => {
+      if (finished) return;
+      finished = true; ov.remove(); resolve(alts && alts[0] ? alts[0] : null);
+    }).catch((e) => {
+      if (finished) return;
+      finished = true; ov.remove();
+      const m = String(e.message || '');
+      toast(/not-allowed|service-not-allowed/.test(m) ? T('Cal permetre el micròfon al navegador.', 'Hay que permitir el micrófono en el navegador.') : T('No t\'he sentit bé. Torna-ho a provar.', 'No te he oído bien. Inténtalo otra vez.'));
+      resolve(null);
+    });
+  });
+}
+
+/* ---------- So d'avís, vibració i confeti ---------- */
+let actx = null;
+function beep(times = 3) {
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    if (actx.state === 'suspended') actx.resume();
+    for (let i = 0; i < times; i++) {
+      const o = actx.createOscillator(), g = actx.createGain();
+      o.type = 'sine'; o.frequency.value = i % 2 ? 660 : 880;
+      g.gain.value = 0.0001; o.connect(g); g.connect(actx.destination);
+      const t0 = actx.currentTime + i * 0.35;
+      g.gain.exponentialRampToValueAtTime(0.5, t0 + 0.03);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.3);
+      o.start(t0); o.stop(t0 + 0.32);
+    }
+  } catch (e) { /* res */ }
+  try { navigator.vibrate && navigator.vibrate([300, 150, 300, 150, 300]); } catch (e) { /* res */ }
+}
+function confetti() {
+  if (S.theme.calm || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const cv = h('canvas', { class: 'confetti', 'aria-hidden': 'true' });
+  document.body.append(cv);
+  const W = (cv.width = innerWidth), H = (cv.height = innerHeight), g = cv.getContext('2d');
+  const cols = ['#ef4444', '#f59e0b', '#22c55e', '#3b82f6', '#a855f7', '#ec4899'];
+  const ps = Array.from({ length: 70 }, () => ({ x: W / 2, y: H * 0.45, vx: (Math.random() - 0.5) * 14, vy: -Math.random() * 14 - 3, s: 6 + Math.random() * 8, c: cols[(Math.random() * cols.length) | 0], r: Math.random() * 6 }));
+  let f = 0;
+  (function loop() {
+    g.clearRect(0, 0, W, H);
+    ps.forEach((p) => { p.vy += 0.35; p.x += p.vx; p.y += p.vy; p.r += 0.2; g.fillStyle = p.c; g.save(); g.translate(p.x, p.y); g.rotate(p.r); g.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); g.restore(); });
+    if (++f < 90) requestAnimationFrame(loop); else cv.remove();
+  })();
+}
+
+/* ---------- Pictogrames ARASAAC (amb emoji de reserva) ---------- */
+const PICT_KEY = 'andromines-pict-cache-v1';
+let pictCache = {};
+try { pictCache = JSON.parse(localStorage.getItem(PICT_KEY)) || {}; } catch (e) { pictCache = {}; }
+const pictQueue = [];
+let pictActive = 0;
+function pictPump() {
+  while (pictActive < 4 && pictQueue.length) {
+    const job = pictQueue.shift();
+    pictActive++;
+    fetch(`https://api.arasaac.org/v1/pictograms/${job.lang}/search/${encodeURIComponent(job.kw)}`)
+      .then((r) => { if (!r.ok) throw new Error('http'); return r.json(); })
+      .then((a) => {
+        const id = Array.isArray(a) && a[0] ? a[0]._id : 0;
+        pictCache[job.lang + ':' + job.kw] = id;
+        try { localStorage.setItem(PICT_KEY, JSON.stringify(pictCache)); } catch (e) { /* res */ }
+        job.res(id);
+      })
+      .catch(() => job.res(null))
+      .finally(() => { pictActive--; pictPump(); });
+  }
+}
+function resolvePict(kw, lang) {
+  const k = lang + ':' + kw;
+  if (k in pictCache) return Promise.resolve(pictCache[k]);
+  return new Promise((res) => { pictQueue.push({ kw, lang, res }); pictPump(); });
+}
+function pictEl(item, size = 64) {
+  const box = h('span', { class: 'pict', style: `--sz:${size}px`, 'aria-hidden': 'true' }, h('span', { class: 'pe' }, item.e));
+  if (S.theme.picto && item.kw && navigator.onLine !== false) {
+    const kw = item.kw[S.lang] || item.kw.ca;
+    resolvePict(kw, S.lang).then((id) => {
+      if (!id) return;
+      const img = new Image();
+      img.alt = '';
+      img.onload = () => { box.classList.add('img'); box.prepend(img); };
+      img.src = `https://static.arasaac.org/pictograms/${id}/${id}_300.png`;
+    });
+  }
+  return box;
+}
+
+/* ---------- Components ---------- */
+function btn(label, onclick, cls = '') { return h('button', { class: 'btn ' + cls, onclick }, label); }
+function toggle(label, value, onchange, hint) {
+  const sw = h('button', { class: 'sw', role: 'switch', 'aria-checked': String(!!value), 'aria-label': label });
+  let v = !!value;
+  sw.onclick = () => { v = !v; sw.setAttribute('aria-checked', String(v)); onchange(v); };
+  return h('div', { class: 'swrow' }, h('div', null, label, hint ? h('small', null, hint) : null), sw);
+}
+function seg(options, value, onchange) {
+  const wrap = h('div', { class: 'seg', role: 'group' });
+  const paint = (cur) => Array.from(wrap.children).forEach((b, i) => b.setAttribute('aria-pressed', String(options[i][0] === cur)));
+  options.forEach(([v, label]) => wrap.append(h('button', { onclick: () => { paint(v); onchange(v); } }, label)));
+  paint(value);
+  return wrap;
+}
+function field(label, input) { return h('div', null, h('label', { class: 'f' }, label), input); }
+
+function pictGrid(items, selected, { multi = true, onChange, cols = 3, size = 64 } = {}) {
+  const sel = new Set(selected);
+  const wrap = h('div', { class: 'tiles' + (cols === 2 ? ' c2' : '') });
+  items.forEach((it) => {
+    const b = h('button', { class: 'tile', 'aria-pressed': String(sel.has(it.id)) }, pictEl(it, size), h('span', null, L(it)));
+    b.onclick = () => {
+      if (multi) { sel.has(it.id) ? sel.delete(it.id) : sel.add(it.id); }
+      else { sel.clear(); sel.add(it.id); }
+      Array.from(wrap.children).forEach((c, i) => c.setAttribute('aria-pressed', String(sel.has(items[i].id))));
+      say(L(it));
+      onChange && onChange([...sel]);
+    };
+    wrap.append(b);
+  });
+  return wrap;
+}
+
+/* Llisca cap als costats, amb fletxes i punts */
+function Swipe(slides) {
+  const track = h('div', { class: 'swipe' }, slides.map((s) => h('div', { class: 'slide' }, s)));
+  const dots = h('div', { class: 'dots', 'aria-hidden': 'true' }, slides.map(() => h('i')));
+  const mk = (cls, txt, dir, label) => h('button', { class: 'arr ' + cls, 'aria-label': label, onclick: () => track.scrollBy({ left: dir * track.clientWidth, behavior: 'smooth' }) }, txt);
+  const l = mk('l', '‹', -1, T('Anterior', 'Anterior')), r = mk('r', '›', 1, T('Següent', 'Siguiente'));
+  const upd = () => {
+    const i = Math.round(track.scrollLeft / Math.max(1, track.clientWidth));
+    Array.from(dots.children).forEach((d, k) => d.classList.toggle('on', k === i));
+    l.style.visibility = i > 0 ? 'visible' : 'hidden';
+    r.style.visibility = i < slides.length - 1 ? 'visible' : 'hidden';
+  };
+  track.addEventListener('scroll', () => requestAnimationFrame(upd), { passive: true });
+  setTimeout(upd, 0);
+  const el = h('div', null, h('div', { class: 'sw-wrap' }, track, slides.length > 1 ? [l, r] : null), slides.length > 1 ? dots : null);
+  return { el, track, goTo: (i) => track.scrollTo({ left: i * track.clientWidth }) };
+}
+
+function flagEl(lang) {
+  const ns = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('viewBox', '0 0 18 12'); svg.setAttribute('class', 'flag'); svg.setAttribute('aria-hidden', 'true');
+  const rect = (x, y, w, hh, f) => { const r = document.createElementNS(ns, 'rect'); r.setAttribute('x', x); r.setAttribute('y', y); r.setAttribute('width', w); r.setAttribute('height', hh); r.setAttribute('fill', f); svg.append(r); };
+  if (lang === 'ca') { rect(0, 0, 18, 12, '#fcdd09'); [1, 3, 5, 7].forEach((i) => rect(0, (12 / 9) * i, 18, 12 / 9, '#da121a')); }
+  else { rect(0, 0, 18, 12, '#aa151b'); rect(0, 3, 18, 6, '#f1bf00'); }
+  return svg;
+}
+
+/* ---------- Pantalles a sobre ---------- */
+function openSheet(title, build) {
+  const root = h('div', { class: 'sheet', role: 'dialog', 'aria-label': title });
+  const body = h('div', { class: 'sheet-b' });
+  const ctl = {
+    el: root, body,
+    close() { root.remove(); document.documentElement.style.overflow = document.querySelector('.sheet') ? 'hidden' : ''; ctl.onClose && ctl.onClose(); },
+    refresh() { const y = body.scrollTop; body.replaceChildren(); build(body, ctl); body.scrollTop = y; },
+  };
+  root.append(h('div', { class: 'sheet-h' }, h('button', { class: 'btn alt', onclick: () => ctl.close(), 'aria-label': T('Tornar', 'Volver') }, '← ' + T('Tornar', 'Volver')), h('div', { class: 'sheet-t' }, title)), body);
+  document.body.append(root);
+  document.documentElement.style.overflow = 'hidden';
+  build(body, ctl);
+  return ctl;
+}
+
+/* Pregunta gran de Sí/No (es llegeix en veu alta) */
+function confirmBig(question, { yes, no, icon } = {}) {
+  return new Promise((resolve) => {
+    const ov = h('div', { class: 'sheet', style: 'z-index:80;justify-content:center;padding:24px;gap:16px;text-align:center', role: 'alertdialog' });
+    const end = (v) => { Voice.stop(); Voice.stopListen(); ov.remove(); resolve(v); };
+    ov.append(
+      icon ? h('div', { class: 'bigemoji' }, icon) : null,
+      h('h2', { style: 'font-size:1.6rem' }, question),
+      h('button', { class: 'ibtn', style: 'align-self:center', onclick: () => say(question), 'aria-label': T('Escolta', 'Escucha') }, '🔊'),
+      h('button', { class: 'btn ok big block', onclick: () => end(true) }, '✔ ' + (yes || T('Sí', 'Sí'))),
+      h('button', { class: 'btn alt big block', onclick: () => end(false) }, '✖ ' + (no || T('No', 'No'))),
+      Voice.recOK ? h('button', { class: 'btn alt block', onclick: async () => { const t = await askByVoice(T('Digues sí o no', 'Di sí o no')); const r = Core.yesNoFrom(t, S.lang); if (r !== null) end(r); else toast(T('No ho he entès. Toca un botó.', 'No lo he entendido. Toca un botón.')); } }, '🎤 ' + T('Respondre amb la veu', 'Responder con la voz')) : null
+    );
+    document.body.append(ov);
+    say(question);
+  });
+}
+
+/* Teclat numèric per al PIN */
+function pinPad(title, len = 4) {
+  return new Promise((resolve) => {
+    let val = '';
+    const dots = h('div', { class: 'pin-dots', 'aria-hidden': 'true' }, Array.from({ length: len }, () => h('i')));
+    const msg = h('p', { class: 'muted center', 'aria-live': 'polite' }, '');
+    const ov = h('div', { class: 'sheet', style: 'z-index:88;justify-content:center;padding:24px', role: 'dialog' });
+    const paint = () => Array.from(dots.children).forEach((d, i) => d.classList.toggle('on', i < val.length));
+    const press = (d) => {
+      if (val.length >= len) return;
+      val += d; paint();
+      if (val.length === len) { const v = val; setTimeout(() => { ov.remove(); resolve(v); }, 180); }
+    };
+    const keys = h('div', { class: 'keypad' });
+    '123456789'.split('').forEach((d) => keys.append(h('button', { onclick: () => press(d), 'aria-label': d }, d)));
+    keys.append(h('button', { onclick: () => { ov.remove(); resolve(null); }, 'aria-label': T('Cancel·la', 'Cancela'), style: 'font-size:1.1rem' }, T('Cancel·la', 'Cancela')), h('button', { onclick: () => press('0'), 'aria-label': '0' }, '0'), h('button', { onclick: () => { val = val.slice(0, -1); paint(); }, 'aria-label': T('Esborra', 'Borra') }, '⌫'));
+    ov.append(h('h2', { class: 'center' }, '🔒 ' + title), dots, msg, keys);
+    document.body.append(ov);
+  });
+}
+const hashPin = (p) => { let x = 5381; for (const c of 'andro' + p) x = ((x * 33) ^ c.charCodeAt(0)) >>> 0; return 'p' + x; };
+
+/* Foto reduïda (per a contactes i medicació) */
+function pickPhoto() {
+  return new Promise((resolve) => {
+    const inp = h('input', { type: 'file', accept: 'image/*', style: 'display:none' });
+    inp.onchange = () => {
+      const f = inp.files && inp.files[0];
+      if (!f) return resolve(null);
+      const img = new Image();
+      const url = URL.createObjectURL(f);
+      img.onload = () => {
+        const s = 160, k = Math.min(1, s / Math.min(img.width, img.height));
+        const c = document.createElement('canvas');
+        const w = Math.round(img.width * k), hh = Math.round(img.height * k);
+        c.width = s; c.height = s;
+        const g = c.getContext('2d');
+        g.fillStyle = '#fff'; g.fillRect(0, 0, s, s);
+        g.drawImage(img, (s - w) / 2, (s - hh) / 2, w, hh);
+        URL.revokeObjectURL(url);
+        resolve(c.toDataURL('image/jpeg', 0.72));
+      };
+      img.onerror = () => resolve(null);
+      img.src = url;
+    };
+    document.body.append(inp); inp.click(); setTimeout(() => inp.remove(), 60000);
+  });
+}
+
+/* ---------- Pantalla encesa (mode sobretaula) ---------- */
+let wakeLock = null;
+async function applyWakeLock() {
+  try {
+    if (S.keepAwake && 'wakeLock' in navigator && document.visibilityState === 'visible') {
+      if (!wakeLock) { wakeLock = await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release', () => { wakeLock = null; }); }
+    } else if (!S.keepAwake && wakeLock) { await wakeLock.release(); wakeLock = null; }
+  } catch (e) { wakeLock = null; }
+}
+document.addEventListener('visibilitychange', () => { applyWakeLock(); if (document.visibilityState === 'visible') runAlarms(); });
+
+/* ---------- Avisos amb veu repetida ---------- */
+const alarmState = { cur: null, queue: [], lastSpoken: 0, timer: null, shown: new Set() };
+function alarmText(it) {
+  const now = Date.now();
+  if (it.kind === 'med') return T(`És l'hora de la medicació: ${it.title}.`, `Es la hora de la medicación: ${it.title}.`);
+  if (it.kind === 'timer') return T('S\'ha acabat el temps.', 'Se ha acabado el tiempo.') + (it.title ? ' ' + it.title : '');
+  const when = Core.whenWords(it.ts, now, S.lang);
+  const left = it.ts - now;
+  const extra = left > 60000 ? ' ' + Core.countdown(it.ts, now, S.lang).replace(/^./, (c) => c.toUpperCase()) + '.' : '';
+  return T(`Atenció. ${it.title}, ${when}.${extra}`, `Atención. ${it.title}, ${when}.${extra}`);
+}
+function alarmSpeak() {
+  const it = alarmState.cur;
+  if (!it) return;
+  alarmState.lastSpoken = Date.now();
+  beep(3);
+  setTimeout(() => say(alarmText(it)), 1300);
+}
+function runAlarms() {
+  const now = Date.now();
+  let due = Core.computeDue(S, now);
+  due = due.filter((d) => !(alarmState.cur && alarmState.cur.key === d.key));
+  due.forEach((d) => { if (!alarmState.queue.find((q) => q.key === d.key)) alarmState.queue.push(d); });
+  // si l'avís actual ja no toca (p. ex. s'ha esborrat l'esdeveniment), el tanquem
+  if (alarmState.cur && !Core.computeDue(S, now).find((d) => d.key === alarmState.cur.key)) closeAlarm(false);
+  if (!alarmState.cur && alarmState.queue.length) showAlarm(alarmState.queue.shift());
+  else if (alarmState.cur && now - alarmState.lastSpoken >= S.voice.repeatMin * 60000) alarmSpeak();
+}
+function showAlarm(it) {
+  alarmState.cur = it;
+  const kindCfg = {
+    event: { a1: '#c2410c', a2: '#ea580c', ok: T('✔ Ja ho sé', '✔ Ya lo sé') },
+    med: { a1: '#b91c1c', a2: '#dc2626', ok: T('✔ Ja m\'ho he pres', '✔ Ya me lo he tomado') },
+    timer: { a1: '#b45309', a2: '#d97706', ok: T('✔ D\'acord', '✔ De acuerdo') },
+  }[it.kind];
+  const ov = h('div', { class: 'alarm flash', style: `--a1:${kindCfg.a1};--a2:${kindCfg.a2}`, role: 'alertdialog', 'aria-live': 'assertive', 'aria-label': T('Avís', 'Aviso') });
+  const more = alarmState.queue.length;
+  ov.append(
+    it.photo ? h('img', { class: 'photo', src: it.photo, alt: '' }) : h('div', { class: 'big' }, it.icon),
+    h('h1', null, it.kind === 'timer' ? T('S\'ha acabat el temps', 'Se ha acabado el tiempo') : it.title),
+    it.kind === 'med' ? h('p', null, T('És l\'hora de la medicació', 'Es la hora de la medicación')) : null,
+    it.kind === 'event' ? h('p', null, Core.whenWords(it.ts, Date.now(), S.lang).replace(/^./, (c) => c.toUpperCase())) : null,
+    more ? h('p', null, T(`+${more} avisos més`, `+${more} avisos más`)) : null,
+    h('button', { class: 'btn big', onclick: () => ackAlarm(it) }, kindCfg.ok),
+    h('button', { class: 'btn alt', onclick: () => snoozeAlarm(it) }, '⏰ ' + T('Torna-m\'ho a dir en 10 min', 'Vuelve a decírmelo en 10 min')),
+    h('button', { class: 'btn alt', style: 'min-height:56px', onclick: () => { alarmState.lastSpoken = 0; alarmSpeak(); } }, '🔊 ' + T('Escolta-ho un altre cop', 'Escúchalo otra vez'))
+  );
+  alarmState.el = ov;
+  document.body.append(ov);
+  alarmSpeak();
+}
+function closeAlarm(next = true) {
+  if (alarmState.el) alarmState.el.remove();
+  alarmState.el = null; alarmState.cur = null; Voice.stop();
+  if (next) setTimeout(runAlarms, 400);
+}
+function ackAlarm(it) {
+  if (it.kind === 'med') S.taken[it.key] = Date.now();
+  else S.acked[it.key] = true;
+  if (it.kind === 'timer') S.timer = null;
+  save(); closeAlarm();
+  if (it.kind === 'med') { confetti(); say(T('Molt bé!', '¡Muy bien!')); }
+  App.refresh();
+}
+function snoozeAlarm(it) {
+  S.snooze[it.key] = Date.now() + 10 * 60000;
+  save(); closeAlarm();
+}
+
+/* ============================================================
+   BLOCS DEL TAULER
+   Cada bloc retorna { body, tick?(now), speak() }
+   ============================================================ */
+const NS = 'http://www.w3.org/2000/svg';
+function svgEl(tag, attrs, ...kids) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs || {}) e.setAttribute(k, attrs[k]);
+  kids.forEach((c) => e.append(c));
+  return e;
+}
+const hhmm = (d) => `${Core.pad(d.getHours())}:${Core.pad(d.getMinutes())}`;
+const other = (l) => (l === 'ca' ? 'es' : 'ca');
+const emptyMsg = (emoji, text, ...extra) => h('div', { class: 'stack center' }, h('div', { class: 'bigemoji' }, emoji), h('p', { style: 'font-size:1.2rem;font-weight:700' }, text), ...extra);
+const extLink = (href, children, cls = 'chip') => h('a', { class: cls, href, target: '_blank', rel: 'noopener', style: 'text-decoration:none;color:inherit' }, children);
+
+const Blocks = {};
+
+/* ---------- RELLOTGE ---------- */
+Blocks.clock = (opts = {}) => {
+  const cfg = S.clock, col = COLORS[cfg.color] || COLORS.blau;
+  const wrap = h('div', { class: 'clock-wrap', style: `--face:${col.face};--ink2:${col.ink};--acc:${col.acc}` });
+  const cap = h('div', { class: 'cap' });
+  let tick;
+  if (cfg.kind === 'analog') {
+    const svg = svgEl('svg', { viewBox: '0 0 200 200', class: 'clock-svg', role: 'img', 'aria-label': T('Rellotge d\'esfera', 'Reloj de esfera') });
+    const sty = { fill: col.face, stroke: col.acc, 'stroke-width': 8 };
+    if (cfg.shape === 'square') svg.append(svgEl('rect', { x: 8, y: 8, width: 184, height: 184, rx: 38, ...sty }));
+    else if (cfg.shape === 'hex') svg.append(svgEl('polygon', { points: '100,4 183,52 183,148 100,196 17,148 17,52', 'stroke-linejoin': 'round', ...sty }));
+    else svg.append(svgEl('circle', { cx: 100, cy: 100, r: 94, ...sty }));
+    for (let i = 0; i < 60; i++) {
+      if (i % 5 === 0) continue;
+      const a = (i * 6 * Math.PI) / 180;
+      svg.append(svgEl('line', { x1: 100 + 86 * Math.sin(a), y1: 100 - 86 * Math.cos(a), x2: 100 + 82 * Math.sin(a), y2: 100 - 82 * Math.cos(a), stroke: col.ink, 'stroke-opacity': 0.45, 'stroke-width': 2 }));
+    }
+    for (let i = 1; i <= 12; i++) {
+      const a = (i * 30 * Math.PI) / 180;
+      const t = svgEl('text', { x: 100 + 70 * Math.sin(a), y: 100 - 70 * Math.cos(a), 'text-anchor': 'middle', 'dominant-baseline': 'central', 'font-size': 26, 'font-weight': 700, fill: col.ink, 'font-family': 'inherit' });
+      t.textContent = i;
+      svg.append(t);
+    }
+    const hand = (len, w, color, back) => svgEl('line', { x1: 100, y1: 100 + back, x2: 100, y2: 100 - len, stroke: color, 'stroke-width': w, 'stroke-linecap': 'round' });
+    const gH = svgEl('g', {}, hand(46, 10, col.ink, 8));
+    const gM = svgEl('g', {}, hand(70, 7, col.ink, 10));
+    const gS = svgEl('g', {}, hand(78, 3, col.acc, 18));
+    svg.append(gH, gM);
+    if (cfg.seconds) svg.append(gS);
+    svg.append(svgEl('circle', { cx: 100, cy: 100, r: 7, fill: col.acc }));
+    wrap.append(svg, cap);
+    let lastMin = -1;
+    tick = (d) => {
+      const m = d.getMinutes(), s = d.getSeconds();
+      gH.setAttribute('transform', `rotate(${(d.getHours() % 12) * 30 + m * 0.5} 100 100)`);
+      gM.setAttribute('transform', `rotate(${m * 6 + (cfg.seconds ? s * 0.1 : 0)} 100 100)`);
+      gS.setAttribute('transform', `rotate(${s * 6} 100 100)`);
+      if (m !== lastMin) { lastMin = m; cap.textContent = Core.speakTime(d, S.lang); }
+    };
+  } else {
+    const dig = h('div', { class: 'digital', role: 'timer', 'aria-label': T('Rellotge digital', 'Reloj digital') });
+    wrap.append(dig, cap);
+    let lastKey = '';
+    tick = (d) => {
+      const key = hhmm(d) + (cfg.seconds ? d.getSeconds() : '');
+      if (key === lastKey) return;
+      lastKey = key;
+      dig.replaceChildren(hhmm(d), cfg.seconds ? h('small', null, ':' + Core.pad(d.getSeconds())) : null);
+      cap.textContent = Core.speakTime(d, S.lang);
+    };
+  }
+  tick(new Date());
+  const row = h('div', { class: 'row', style: 'justify-content:center;width:100%' },
+    h('button', { class: 'btn big grow', style: 'min-width:200px', onclick: () => say(Core.speakTime(new Date(), S.lang), S.lang) }, '🔊 ' + T('Digues-me l\'hora', 'Dime la hora')),
+    h('button', { class: 'btn alt', 'aria-label': T('Digues-ho en l\'altra llengua', 'Dilo en el otro idioma'), onclick: () => { const o = other(S.lang); if (!Voice.has(o)) toast(T('Aquest mòbil no té veu per a aquesta llengua.', 'Este móvil no tiene voz para este idioma.')); say(Core.speakTime(new Date(), o), o); } }, flagEl(other(S.lang)), h('span', null, other(S.lang).toUpperCase())),
+    S.perms.board ? h('button', { class: 'ibtn', 'aria-label': T('Canvia el rellotge', 'Cambia el reloj'), onclick: clockLook }, '🎨') : null
+  );
+  if (!opts.preview) wrap.append(row);
+  return { body: wrap, tick, speak: () => Core.speakTime(new Date(), S.lang) };
+};
+
+/* ---------- AVUI ---------- */
+let birthdayShown = false;
+Blocks.today = () => {
+  const root = h('div', { class: 'stack center' });
+  let lastKey = '';
+  const render = (d) => {
+    const mo = Core.momentOf(d.getHours(), S.lang), se = Core.seasonOf(d, S.lang);
+    const hol = Core.holidayOf(d, S.lang);
+    const tm = new Date(d); tm.setDate(d.getDate() + 1);
+    const holT = Core.holidayOf(tm, S.lang);
+    const wk = d.getDay() === 0 || d.getDay() === 6;
+    const bd = S.birthday && S.birthday === `${Core.pad(d.getMonth() + 1)}-${Core.pad(d.getDate())}`;
+    root.replaceChildren(
+      bd ? h('div', { class: 'badge green', style: 'font-size:1.3rem' }, '🎂 ' + T(`Moltes felicitats${S.name ? ', ' + S.name : ''}!`, `¡Felicidades${S.name ? ', ' + S.name : ''}!`)) : null,
+      h('div', { class: 'bigemoji' }, mo.emoji),
+      h('div', { style: 'font-weight:700;color:var(--muted)' }, mo.name),
+      h('div', { class: 'bigday' }, Core.DAYS[S.lang][d.getDay()]),
+      h('div', { style: 'font-size:1.4rem;font-weight:700' }, `${Core.dayMonth(d, S.lang)} ${T('de', 'de')} ${d.getFullYear()}`),
+      h('div', { class: 'chips' },
+        h('span', { class: 'chip' }, se.emoji + ' ' + se.name),
+        hol ? h('span', { class: 'badge red' }, '🎉 ' + hol) : wk ? h('span', { class: 'badge green' }, '🛋️ ' + T('Cap de setmana', 'Fin de semana')) : null,
+        !hol && holT ? h('span', { class: 'badge' }, '📌 ' + T('Demà és festa: ', 'Mañana es fiesta: ') + holT) : null),
+      h('p', { style: 'font-size:1.15rem;font-style:italic;max-width:30ch' }, '“' + Core.dayPhrase(d, S.lang) + '”')
+    );
+    if (bd && !birthdayShown) { birthdayShown = true; setTimeout(confetti, 400); }
+  };
+  render(new Date());
+  return {
+    body: root,
+    tick: (d) => { const k = Core.ymd(d) + Core.momentOf(d.getHours(), 'ca').name; if (k !== lastKey) { lastKey = k; render(d); } },
+    speak: () => {
+      const d = new Date(), hol = Core.holidayOf(d, S.lang);
+      return Core.speakDate(d, S.lang) + (hol ? ' ' + T('Avui és festa: ', 'Hoy es fiesta: ') + hol + '.' : '') + ' ' + Core.dayPhrase(d, S.lang);
+    },
+  };
+};
+
+/* ---------- AGENDA ---------- */
+Blocks.agenda = () => {
+  const now = Date.now();
+  const evs = S.events.filter((e) => e.ts > now - 30 * 60000).sort((a, b) => a.ts - b.ts).slice(0, 6);
+  const root = h('div', { class: 'stack' });
+  if (!evs.length) root.append(emptyMsg('🗓️', T('No tens res apuntat', 'No tienes nada apuntado')));
+  else {
+    const sw = Swipe(evs.map((e) => h('div', { class: 'stack center', style: 'width:100%' },
+      h('div', { class: 'bigemoji' }, e.icon || '📅'),
+      h('div', { style: 'font-size:1.6rem;font-weight:700;line-height:1.15' }, e.title),
+      h('div', { style: 'font-size:1.25rem;font-weight:700' }, Core.cap(Core.dayWord(e.ts, now, S.lang)) + ' · ' + hhmm(new Date(e.ts))),
+      h('div', { class: 'muted' }, Core.countdown(e.ts, now, S.lang)),
+      h('div', { class: 'row', style: 'justify-content:center' },
+        h('button', { class: 'ibtn', 'aria-label': T('Escolta', 'Escucha'), onclick: () => say(`${e.title}, ${Core.whenWords(e.ts, Date.now(), S.lang)}`) }, '🔊'),
+        S.perms.events ? h('button', { class: 'ibtn', 'aria-label': T('Esborra', 'Borra'), onclick: async () => { if (await confirmBig(T(`Vols esborrar "${e.title}"?`, `¿Quieres borrar "${e.title}"?`), { icon: '🗑️' })) { S.events = S.events.filter((x) => x.id !== e.id); save(); App.refresh(); } } }, '🗑️') : null)
+    )));
+    root.append(sw.el);
+  }
+  if (S.perms.events) root.append(h('button', { class: 'btn big block', onclick: () => agendaAdd() }, '🎤 ' + T('Apunta alguna cosa', 'Apunta algo')));
+  return {
+    body: root,
+    speak: () => evs.length ? T('Tens apuntat: ', 'Tienes apuntado: ') + evs.slice(0, 3).map((e) => `${e.title}, ${Core.whenWords(e.ts, Date.now(), S.lang)}`).join('. ') : T('No tens res apuntat.', 'No tienes nada apuntado.'),
+  };
+};
+
+function agendaAdd(preset) {
+  openSheet(T('Apunta alguna cosa', 'Apunta algo'), (body, ctl) => {
+    const draft = preset || null;
+    if (draft) return form(draft);
+    const ex = T('Visitar la tieta demà a les 11', 'Visitar a la tía mañana a las 11');
+    const inp = h('input', { type: 'text', placeholder: ex, 'aria-label': T('Escriu què vols apuntar', 'Escribe qué quieres apuntar'), enterkeyhint: 'done' });
+    const go = (text) => { if (!text || !text.trim()) { toast(T('Escriu o digues alguna cosa.', 'Escribe o di algo.')); return; } form(Core.parseEvent(text)); };
+    body.append(
+      h('p', { class: 'center', style: 'font-size:1.15rem' }, T('Prem el micròfon i digues, per exemple:', 'Pulsa el micrófono y di, por ejemplo:')),
+      h('p', { class: 'center muted', style: 'font-weight:700' }, '«' + ex + '»'),
+      Voice.recOK ? h('button', { class: 'btn big block', style: 'min-height:96px;font-size:1.5rem', onclick: async () => { const t = await askByVoice(T('Què vols apuntar?', '¿Qué quieres apuntar?')); if (t) { inp.value = t; go(t); } } }, '🎤 ' + T('Parla', 'Habla')) : h('p', { class: 'badge' }, T('Aquest navegador no té micròfon; escriu-ho.', 'Este navegador no tiene micrófono; escríbelo.')),
+      h('h3', null, T('O escriu-ho', 'O escríbelo')), inp,
+      h('div', { style: 'margin-top:14px' }, h('button', { class: 'btn alt block', onclick: () => go(inp.value) }, '✔ ' + T('Continua', 'Continúa')))
+    );
+    function form(d) {
+      body.replaceChildren();
+      let title = d.title || '', ts = d.ts, lead = 30, icon = Core.guessIcon(d.title || '');
+      const dt = ts ? new Date(ts) : null;
+      const tI = h('input', { type: 'text', value: title, 'aria-label': T('Què', 'Qué') });
+      const dI = h('input', { type: 'date', value: dt ? Core.ymd(dt) : '', 'aria-label': T('Dia', 'Día') });
+      const hI = h('input', { type: 'time', value: dt ? hhmm(dt) : '', 'aria-label': T('Hora', 'Hora') });
+      const sum = h('div', { class: 'center', style: 'font-size:1.25rem;font-weight:700;min-height:3em' });
+      const read = () => {
+        title = tI.value.trim();
+        if (dI.value && hI.value) { const [y, m, dd] = dI.value.split('-').map(Number); const [hh, mi] = hI.value.split(':').map(Number); ts = new Date(y, m - 1, dd, hh, mi).getTime(); } else ts = null;
+        icon = Core.guessIcon(title);
+        sum.replaceChildren(ts ? h('div', null, icon + ' ' + (title || '…'), h('br'), Core.cap(Core.whenWords(ts, Date.now(), S.lang))) : T('Falta el dia o l\'hora', 'Falta el día o la hora'));
+        saveB.disabled = !ts || !title;
+      };
+      const saveB = h('button', { class: 'btn ok big block', onclick: () => {
+        read();
+        if (!ts || !title) return;
+        if (ts < Date.now()) { toast(T('Aquesta hora ja ha passat.', 'Esa hora ya ha pasado.')); return; }
+        S.events.push({ id: uid(), title, ts, lead, icon });
+        S.events.sort((a, b) => a.ts - b.ts);
+        save(); ctl.close(); App.refresh(); confetti();
+        say(T('Apuntat. ', 'Apuntado. ') + `${title}, ${Core.whenWords(ts, Date.now(), S.lang)}.`);
+      } }, '✔ ' + T('Apunta-ho', 'Apúntalo'));
+      [tI, dI, hI].forEach((i) => i.addEventListener('input', read));
+      body.append(
+        d.needsTime ? h('p', { class: 'badge' }, T('Digues a quina hora.', 'Dime a qué hora.')) : null,
+        sum,
+        h('button', { class: 'btn alt block', onclick: () => { read(); if (ts) say(`${title}, ${Core.whenWords(ts, Date.now(), S.lang)}. ${T('Està bé?', '¿Está bien?')}`); } }, '🔊 ' + T('Escolta què he entès', 'Escucha lo que he entendido')),
+        field(T('Què', 'Qué'), tI), field(T('Dia', 'Día'), dI), field(T('Hora', 'Hora'), hI),
+        h('label', { class: 'f' }, T('Avisa\'m', 'Avísame')),
+        seg([[0, T('Quan toqui', 'Cuando toque')], [10, T('10 min abans', '10 min antes')], [30, T('30 min abans', '30 min antes')], [60, T('1 hora abans', '1 hora antes')]], 30, (v) => { lead = v; }),
+        h('div', { style: 'margin-top:20px' }, saveB)
+      );
+      read();
+      if (ts) say(`${T('He entès:', 'He entendido:')} ${title}, ${Core.whenWords(ts, Date.now(), S.lang)}.`);
+    }
+  });
+}
+
+/* ---------- MEDICACIÓ ---------- */
+Blocks.meds = () => {
+  const root = h('div', { class: 'stack' });
+  const now = Date.now();
+  const doses = Core.medsToday(S, now);
+  if (!S.meds.length) root.append(emptyMsg('💊', T('No hi ha medicació apuntada', 'No hay medicación apuntada'), h('p', { class: 'muted' }, T('El monitor/a la pot afegir.', 'El monitor/a la puede añadir.'))));
+  else if (!doses.length) root.append(emptyMsg('✅', T('Avui no toca cap medicació', 'Hoy no toca ninguna medicación')));
+  else {
+    const sw = Swipe(doses.map((d) => {
+      const when = new Date(d.ts);
+      const taken = d.status === 'taken';
+      const canTake = !taken && now >= d.ts - 60 * 60000;
+      const badge = { taken: ['green', '✔ ' + T('Pres', 'Tomado')], due: ['red', '⏰ ' + T('Ara toca', 'Ahora toca')], upcoming: ['', '⏳ ' + T('Més tard', 'Más tarde')], missed: ['red', '❗ ' + T('No registrat', 'No registrado')] }[d.status];
+      return h('div', { class: 'stack center', style: 'width:100%' },
+        d.med.photo ? h('img', { class: 'photo', style: 'width:110px;height:110px;border-radius:22px', src: d.med.photo, alt: '' }) : h('div', { class: 'bigemoji' }, d.med.icon || '💊'),
+        h('div', { style: 'font-size:1.5rem;font-weight:700' }, d.med.name),
+        h('div', { style: 'font-size:2.4rem;font-weight:700' }, hhmm(when)),
+        h('span', { class: 'badge ' + badge[0] }, badge[1]),
+        h('button', { class: 'btn ok big block', disabled: !canTake, onclick: () => { S.taken[d.key] = Date.now(); save(); confetti(); say(T('Molt bé!', '¡Muy bien!')); App.refresh(); } }, '✔ ' + T('Ja m\'ho he pres', 'Ya me lo he tomado'))
+      );
+    }));
+    root.append(sw.el);
+    const idx = Math.max(0, doses.findIndex((d) => d.status !== 'taken'));
+    setTimeout(() => sw.goTo(idx), 30);
+  }
+  return {
+    body: root,
+    speak: () => {
+      const nxt = doses.find((d) => d.status === 'due' || d.status === 'upcoming');
+      return nxt ? T(`Propera medicació: ${nxt.med.name}, a les ${hhmm(new Date(nxt.ts))}.`, `Próxima medicación: ${nxt.med.name}, a las ${hhmm(new Date(nxt.ts))}.`) : T('Avui no et queda cap medicació.', 'Hoy no te queda ninguna medicación.');
+    },
+  };
+};
+
+/* ---------- TEMPS ---------- */
+const Wx = { data: null, city: '', err: null, loading: false, at: 0, subs: [] };
+try { const c = JSON.parse(localStorage.getItem('andromines-wx')); if (c && c.data) Object.assign(Wx, c); } catch (e) { /* res */ }
+function locate() {
+  return new Promise((resolve, reject) => {
+    const viaIP = () => fetch('https://ipwho.is/').then((r) => r.json()).then((j) => (j && j.latitude ? resolve({ lat: j.latitude, lon: j.longitude, approx: true }) : reject(new Error('ip')))).catch(reject);
+    if (!('geolocation' in navigator)) return viaIP();
+    navigator.geolocation.getCurrentPosition((p) => resolve({ lat: p.coords.latitude, lon: p.coords.longitude }), viaIP, { timeout: 8000, maximumAge: 600000 });
+  });
+}
+async function wxFetch(force) {
+  if (Wx.loading || (!force && Wx.data && Date.now() - Wx.at < 20 * 60000)) return;
+  Wx.loading = true; Wx.err = null; Wx.subs.forEach((f) => f());
+  try {
+    const loc = await locate();
+    const [w, g] = await Promise.all([
+      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lon}&current=temperature_2m,apparent_temperature,weather_code,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&forecast_days=1`).then((r) => r.json()),
+      fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${loc.lat}&longitude=${loc.lon}&localityLanguage=${S.lang}`).then((r) => r.json()).catch(() => ({})),
+    ]);
+    if (!w.current) throw new Error('no data');
+    Wx.data = { cur: w.current, day: w.daily }; Wx.city = g.city || g.locality || ''; Wx.at = Date.now();
+    try { localStorage.setItem('andromines-wx', JSON.stringify({ data: Wx.data, city: Wx.city, at: Wx.at })); } catch (e) { /* res */ }
+  } catch (e) { Wx.err = true; }
+  Wx.loading = false; Wx.subs.forEach((f) => f());
+}
+function wxSummary() {
+  if (!Wx.data) return T('Encara no tinc el temps.', 'Aún no tengo el tiempo.');
+  const c = Wx.data.cur, d = Wx.data.day;
+  const wi = Core.weatherInfo(c.weather_code, c.is_day, S.lang);
+  const rain = (d.precipitation_probability_max || [0])[0] || 0;
+  const of = Core.outfit(c.apparent_temperature, rain, S.lang).map((o) => o.t).join(', ');
+  return T(`Ara fa ${Math.round(c.temperature_2m)} graus. ${wi.t}. Avui, màxima de ${Math.round(d.temperature_2m_max[0])} i mínima de ${Math.round(d.temperature_2m_min[0])}. Et recomano: ${of}.`, `Ahora hace ${Math.round(c.temperature_2m)} grados. ${wi.t}. Hoy, máxima de ${Math.round(d.temperature_2m_max[0])} y mínima de ${Math.round(d.temperature_2m_min[0])}. Te recomiendo: ${of}.`);
+}
+Blocks.weather = () => {
+  const root = h('div', { class: 'stack' });
+  const render = () => {
+    root.replaceChildren();
+    if (!Wx.data) {
+      root.append(emptyMsg(Wx.err ? '📡' : '⏳', Wx.err ? T('No puc veure el temps ara', 'No puedo ver el tiempo ahora') : T('Mirant el temps…', 'Mirando el tiempo…')),
+        Wx.err ? h('button', { class: 'btn alt block', onclick: () => wxFetch(true) }, '🔄 ' + T('Torna-ho a provar', 'Inténtalo otra vez')) : null);
+      return;
+    }
+    const c = Wx.data.cur, d = Wx.data.day;
+    const wi = Core.weatherInfo(c.weather_code, c.is_day, S.lang);
+    const rain = (d.precipitation_probability_max || [0])[0] || 0;
+    const of = Core.outfit(c.apparent_temperature, rain, S.lang);
+    const sw = Swipe([
+      h('div', { class: 'stack center', style: 'width:100%' }, h('div', { class: 'bigemoji' }, wi.e), h('div', { style: 'font-size:3rem;font-weight:700' }, Math.round(c.temperature_2m) + '°'), h('div', { style: 'font-size:1.3rem;font-weight:700' }, wi.t), h('div', { class: 'muted' }, T('Sensació: ', 'Sensación: ') + Math.round(c.apparent_temperature) + '°')),
+      h('div', { class: 'stack center', style: 'width:100%' }, h('div', { class: 'bigemoji' }, '📈'), h('div', { style: 'font-size:1.5rem;font-weight:700' }, T('Avui', 'Hoy')), h('div', { style: 'font-size:1.6rem;font-weight:700' }, `⬆ ${Math.round(d.temperature_2m_max[0])}°   ⬇ ${Math.round(d.temperature_2m_min[0])}°`), h('span', { class: 'badge' + (rain >= 50 ? ' red' : '') }, '☔ ' + T('Pluja: ', 'Lluvia: ') + rain + ' %')),
+      h('div', { class: 'stack center', style: 'width:100%' }, h('div', { style: 'font-size:1.4rem;font-weight:700' }, T('Què em poso?', '¿Qué me pongo?')), h('div', { class: 'chips' }, of.map((o) => h('span', { class: 'chip', style: 'font-size:1.15rem' }, o.e + ' ' + o.t)))),
+    ]);
+    root.append(sw.el, h('div', { class: 'row', style: 'justify-content:center' }, h('span', { class: 'muted' }, '📍 ' + (Wx.city || T('La teva zona', 'Tu zona')) + ' · ' + hhmm(new Date(Wx.at))), h('button', { class: 'mini', 'aria-label': T('Actualitza', 'Actualiza'), onclick: () => wxFetch(true) }, '🔄')));
+  };
+  Wx.subs = Wx.subs.filter(() => false); Wx.subs.push(render);
+  render(); wxFetch(false);
+  return { body: root, speak: wxSummary };
+};
+
+/* ---------- RUTINES ---------- */
+Blocks.routines = () => {
+  const root = h('div', { class: 'stack' });
+  if (!S.routines.length) { root.append(emptyMsg('✅', T('Encara no tens rutines', 'Aún no tienes rutinas'), h('p', { class: 'muted' }, T('El monitor/a te les pot preparar.', 'El monitor/a te las puede preparar.')))); return { body: root, speak: () => T('Encara no tens rutines.', 'Aún no tienes rutinas.') }; }
+  const day = Core.ymd(new Date());
+  const slide = (r) => {
+    const box = h('div', { class: 'stack', style: 'width:100%' });
+    const k = day + '|' + r.id;
+    const draw = () => {
+      const done = new Set(S.routDone[k] || []);
+      box.replaceChildren(
+        h('div', { class: 'center', style: 'font-size:1.4rem;font-weight:700' }, L(r.name)),
+        h('div', { class: 'prog', role: 'progressbar', 'aria-valuemin': 0, 'aria-valuemax': r.steps.length, 'aria-valuenow': done.size }, h('i', { style: `width:${(done.size / Math.max(1, r.steps.length)) * 100}%` })),
+        h('div', { class: 'center muted' }, `${done.size} / ${r.steps.length}`),
+        h('div', { class: 'steps' }, r.steps.map((sid, i) => {
+          const a = actionById(sid) || { e: '▫️', ca: sid, es: sid };
+          const isDone = done.has(i);
+          return h('button', { class: 'li' + (isDone ? ' done' : ''), style: 'width:100%;text-align:left', 'aria-pressed': String(isDone), onclick: () => {
+            const cur = new Set(S.routDone[k] || []);
+            if (cur.has(i)) cur.delete(i); else { cur.add(i); say(L(a)); }
+            S.routDone = Object.fromEntries(Object.entries(S.routDone).filter(([kk]) => kk.startsWith(day)));
+            S.routDone[k] = [...cur]; save(); draw();
+            if (cur.size === r.steps.length && !isDone) { confetti(); say(T('Molt bé! Has acabat la rutina.', '¡Muy bien! Has terminado la rutina.')); }
+          } }, pictEl(a, 56), h('div', { class: 't' }, L(a)), h('span', { style: 'font-size:1.8rem' }, isDone ? '✅' : '⬜'));
+        }))
+      );
+    };
+    draw();
+    return box;
+  };
+  const sw = Swipe(S.routines.map(slide));
+  root.append(sw.el);
+  return { body: root, speak: () => T('Les teves rutines: ', 'Tus rutinas: ') + S.routines.map((r) => L(r.name)).join(', ') };
+};
+
+/* ---------- COM EM SENTO ---------- */
+Blocks.mood = () => {
+  const root = h('div', { class: 'stack' });
+  const draw = () => {
+    const today = Core.ymd(new Date());
+    const last = [...S.mood].reverse().find((m) => Core.ymd(new Date(m.ts)) === today);
+    root.replaceChildren(
+      h('p', { class: 'center', style: 'font-size:1.3rem;font-weight:700' }, T('Com et sents ara?', '¿Cómo te sientes ahora?')),
+      h('div', { class: 'faces' }, MOODS.map((m) => h('button', { class: 'face', 'aria-pressed': String(!!last && last.v === m.id), onclick: () => {
+        S.mood.push({ ts: Date.now(), v: m.id }); S.mood = S.mood.slice(-120); save();
+        say(L(m) + '. ' + T('Gràcies per dir-m\'ho.', 'Gracias por decírmelo.')); draw();
+      } }, pictEl(m, 56), h('span', null, L(m))))),
+      last && last.v <= 2 ? h('div', { class: 'stack center' }, h('p', { style: 'font-weight:700;font-size:1.15rem' }, T('Vols parlar amb algú?', '¿Quieres hablar con alguien?')), h('button', { class: 'btn big block', onclick: () => (S.contacts.length ? contactsSheet() : openHelp()) }, '📞 ' + T('Truca a algú', 'Llama a alguien'))) : null
+    );
+  };
+  draw();
+  return { body: root, speak: () => T('Com et sents ara? Toca una cara.', '¿Cómo te sientes ahora? Toca una cara.') };
+};
+
+/* ---------- LES MEVES PERSONES ---------- */
+async function callContact(c) {
+  if (await confirmBig(T(`Vols trucar a ${c.name}?`, `¿Quieres llamar a ${c.name}?`), { icon: '📞' })) location.href = 'tel:' + c.phone.replace(/\s+/g, '');
+}
+function contactsSheet() {
+  openSheet(T('Les meves persones', 'Mis personas'), (body) => {
+    if (!S.contacts.length) body.append(emptyMsg('👪', T('Encara no hi ha ningú', 'Aún no hay nadie')));
+    S.contacts.forEach((c) => body.append(h('button', { class: 'li', style: 'width:100%;text-align:left', onclick: () => callContact(c) }, c.photo ? h('img', { class: 'photo', src: c.photo, alt: '' }) : h('div', { class: 'photo' }, '👤'), h('div', { class: 't', style: 'font-size:1.3rem' }, c.name, h('small', null, c.phone)), h('span', { style: 'font-size:2rem' }, '📞'))));
+  });
+}
+Blocks.contacts = () => {
+  const root = h('div', { class: 'stack' });
+  if (!S.contacts.length) { root.append(emptyMsg('👪', T('Encara no hi ha ningú', 'Aún no hay nadie'), h('p', { class: 'muted' }, T('El monitor/a pot afegir les persones que vols trucar.', 'El monitor/a puede añadir a las personas a las que quieres llamar.')))); return { body: root, speak: () => T('Encara no tens contactes.', 'Aún no tienes contactos.') }; }
+  const sw = Swipe(S.contacts.map((c) => h('div', { class: 'stack center', style: 'width:100%' },
+    c.photo ? h('img', { class: 'photo', style: 'width:120px;height:120px', src: c.photo, alt: '' }) : h('div', { class: 'photo', style: 'width:120px;height:120px;font-size:4rem' }, '👤'),
+    h('div', { style: 'font-size:1.6rem;font-weight:700' }, c.name),
+    h('button', { class: 'btn ok big block', onclick: () => callContact(c) }, '📞 ' + T('Truca', 'Llama')),
+    h('button', { class: 'ibtn', onclick: () => say(c.name), 'aria-label': T('Escolta', 'Escucha') }, '🔊'))));
+  root.append(sw.el);
+  return { body: root, speak: () => T('Pots trucar a: ', 'Puedes llamar a: ') + S.contacts.map((c) => c.name).join(', ') };
+};
+
+/* ---------- ESPORTS ---------- */
+const sdbCache = {};
+const SDB = 'https://www.thesportsdb.com/api/v1/json/123/';
+async function resolveTeam(t) {
+  if (t.id) return t.id;
+  const sp = SPORTS.find((s) => s.id === t.sport);
+  const r = await fetch(SDB + 'searchteams.php?t=' + encodeURIComponent(t.q || t.name)).then((x) => x.json());
+  const list = (r.teams || []).filter((x) => !sp || !sp.sdb || x.strSport === sp.sdb);
+  const hit = list.find((x) => x.strTeam.toLowerCase().includes((t.q || t.name).toLowerCase())) || list[0];
+  if (!hit) throw new Error('no team');
+  t.id = hit.idTeam; t.badge = hit.strBadge || hit.strTeamBadge || ''; save();
+  return t.id;
+}
+async function teamData(t) {
+  const c = sdbCache[t.name];
+  if (c && Date.now() - c.at < 30 * 60000) return c.v;
+  const id = await resolveTeam(t);
+  const [nx, ls] = await Promise.all([fetch(SDB + 'eventsnext.php?id=' + id).then((r) => r.json()).catch(() => ({})), fetch(SDB + 'eventslast.php?id=' + id).then((r) => r.json()).catch(() => ({}))]);
+  const v = { next: (nx.events || [])[0] || null, last: (ls.results || []).slice(-1)[0] || null, id };
+  sdbCache[t.name] = { at: Date.now(), v };
+  return v;
+}
+function evDate(ev) {
+  if (!ev.dateEvent) return null;
+  const hasT = ev.strTime && ev.strTime !== '00:00:00';
+  return { d: hasT ? new Date(`${ev.dateEvent}T${ev.strTime}Z`) : new Date(`${ev.dateEvent}T12:00:00`), hasT };
+}
+Blocks.sports = () => {
+  const root = h('div', { class: 'stack' });
+  const teams = S.sports.teams, picked = S.sports.picked.map((id) => SPORTS.find((s) => s.id === id)).filter(Boolean);
+  const noTeam = picked.filter((s) => !s.sdb || !teams.some((t) => t.sport === s.id));
+  const slides = [];
+  teams.forEach((t) => {
+    const box = h('div', { class: 'stack center', style: 'width:100%' }, h('div', { style: 'font-size:1.4rem;font-weight:700' }, t.name), h('div', { class: 'muted' }, T('Mirant els partits…', 'Mirando los partidos…')));
+    teamData(t).then((v) => {
+      const rows = [h('div', { style: 'font-size:1.4rem;font-weight:700' }, (SPORTS.find((s) => s.id === t.sport) || { e: '🏟️' }).e + ' ' + t.name)];
+      if (v.next) {
+        const ed = evDate(v.next), home = v.next.idHomeTeam === String(v.id);
+        rows.push(h('div', { class: 'muted', style: 'font-weight:700;margin-top:6px' }, T('Pròxim partit', 'Próximo partido')), h('div', { style: 'font-size:1.35rem;font-weight:700' }, (home ? 'vs. ' : '@ ') + (home ? v.next.strAwayTeam : v.next.strHomeTeam)),
+          ed ? h('div', { style: 'font-weight:700' }, `${Core.cap(Core.dayWord(ed.d.getTime(), Date.now(), S.lang))} ${Core.pad(ed.d.getDate())}/${Core.pad(ed.d.getMonth() + 1)}${ed.hasT ? ' · ' + hhmm(ed.d) + 'h' : ''}`) : null,
+          v.next.strLeague ? h('span', { class: 'badge' }, v.next.strLeague) : null);
+      } else rows.push(h('div', { class: 'muted' }, T('No sé el pròxim partit.', 'No sé el próximo partido.')));
+      if (v.last && v.last.intHomeScore != null) {
+        const hs = +v.last.intHomeScore, as = +v.last.intAwayScore, home = v.last.idHomeTeam === String(v.id);
+        const mine = home ? hs : as, theirs = home ? as : hs;
+        rows.push(h('div', { class: 'muted', style: 'font-weight:700;margin-top:8px' }, T('Últim resultat', 'Último resultado')), h('div', { style: 'font-weight:700' }, `${v.last.strHomeTeam} ${hs} – ${as} ${v.last.strAwayTeam}`), h('span', { class: 'badge ' + (mine > theirs ? 'green' : mine < theirs ? 'red' : '') }, mine > theirs ? '🎉 ' + T('Victòria', 'Victoria') : mine < theirs ? T('Derrota', 'Derrota') : T('Empat', 'Empate')));
+      }
+      box.replaceChildren(...rows);
+    }).catch(() => box.replaceChildren(h('div', { style: 'font-size:1.4rem;font-weight:700' }, t.name), h('div', { class: 'muted' }, T('Ara no puc veure els partits.', 'Ahora no puedo ver los partidos.')), extLink('https://www.google.com/search?q=' + encodeURIComponent(t.name + ' ' + T('calendari', 'calendario')), '🔎 ' + T('Cerca el calendari', 'Busca el calendario'))));
+    slides.push(box);
+  });
+  noTeam.forEach((s) => slides.push(h('div', { class: 'stack center', style: 'width:100%' }, pictEl(s, 96), h('div', { style: 'font-size:1.4rem;font-weight:700' }, L(s)), extLink('https://www.google.com/search?q=' + encodeURIComponent(L(s) + ' ' + T('notícies i calendari', 'noticias y calendario')), '🔎 ' + T('Notícies i calendari', 'Noticias y calendario')))));
+  if (!slides.length) root.append(emptyMsg('⚽', T('Tria els teus esports', 'Elige tus deportes')), S.perms.likes ? h('button', { class: 'btn big block', onclick: () => likesFlow('sports') }, '👉 ' + T('Triar', 'Elegir')) : null);
+  else { root.append(Swipe(slides).el); if (S.perms.likes) root.append(h('button', { class: 'btn alt block', onclick: () => likesFlow('sports') }, '✏️ ' + T('Canvia els meus esports', 'Cambia mis deportes'))); }
+  return { body: root, speak: () => T('Els teus esports: ', 'Tus deportes: ') + (picked.map((s) => L(s)).join(', ') || T('cap encara', 'ninguno aún')) };
+};
+
+/* ---------- MÚSICA ---------- */
+Blocks.music = () => {
+  const root = h('div', { class: 'stack' });
+  const styles = S.music.styles.map((id) => MUSIC.find((m) => m.id === id)).filter(Boolean);
+  const yt = (q) => 'https://www.youtube.com/results?search_query=' + encodeURIComponent(q);
+  if (!styles.length && !S.music.artists.length) root.append(emptyMsg('🎵', T('Tria la música que t\'agrada', 'Elige la música que te gusta')), S.perms.likes ? h('button', { class: 'btn big block', onclick: () => likesFlow('music') }, '👉 ' + T('Triar', 'Elegir')) : null);
+  else {
+    root.append(h('div', { class: 'chips' }, styles.map((m) => extLink(yt(L(m) + ' ' + T('música', 'música')), [pictEl(m, 44), h('span', null, L(m))])), S.music.artists.map((a) => extLink(yt(a), ['🎤 ', a]))));
+    if (S.perms.likes) root.append(h('button', { class: 'btn alt block', onclick: () => likesFlow('music') }, '✏️ ' + T('Canvia la meva música', 'Cambia mi música')));
+  }
+  root.append(h('h3', { class: 'center', style: 'margin:6px 0 0' }, '📻 ' + T('Ràdio', 'Radio')), h('div', { class: 'chips' }, extLink('https://www.ccma.cat/catalunya-radio/', 'Catalunya Ràdio'), extLink('https://www.rac1.cat/', 'RAC1'), extLink('https://radio.garden', 'Radio Garden')));
+  return { body: root, speak: () => T('Música: toca el que vulguis escoltar.', 'Música: toca lo que quieras escuchar.') };
+};
+
+/* ---------- HORÒSCOP ---------- */
+Blocks.zodiac = () => {
+  const root = h('div', { class: 'stack center' });
+  if (!S.zodiac && S.birthday) { const [m, d] = S.birthday.split('-').map(Number); S.zodiac = Core.zodiacOf(m, d); save(); }
+  const draw = () => {
+    const z = Core.ZODIAC.find((x) => x.id === S.zodiac);
+    root.replaceChildren();
+    if (!z) {
+      root.append(h('p', { style: 'font-size:1.2rem;font-weight:700' }, T('Quin és el teu signe?', '¿Cuál es tu signo?')),
+        h('div', { class: 'tiles' }, Core.ZODIAC.map((x) => h('button', { class: 'tile', onclick: () => { S.zodiac = x.id; save(); say(L(x)); draw(); } }, h('span', { style: 'font-size:2.4rem' }, x.e), h('span', null, L(x))))));
+      return;
+    }
+    root.append(h('div', { class: 'bigemoji', style: 'font-size:6rem' }, z.e), h('div', { style: 'font-size:1.8rem;font-weight:700' }, L(z)),
+      h('div', { class: 'muted' }, `${z.from[1]}/${z.from[0]} – ${z.to[1]}/${z.to[0]}`),
+      h('p', { style: 'font-size:1.2rem;font-weight:700;max-width:28ch' }, Core.zodiacMessage(z.id, new Date(), S.lang)),
+      h('small', { class: 'muted' }, T('Un missatge per animar-te, només per diversió.', 'Un mensaje para animarte, solo por diversión.')),
+      S.perms.likes ? h('button', { class: 'btn alt', onclick: () => { S.zodiac = ''; save(); draw(); } }, T('Canvia de signe', 'Cambia de signo')) : null);
+  };
+  draw();
+  return { body: root, speak: () => { const z = Core.ZODIAC.find((x) => x.id === S.zodiac); return z ? `${L(z)}. ${Core.zodiacMessage(z.id, new Date(), S.lang)}` : T('Tria el teu signe.', 'Elige tu signo.'); } };
+};
+
+/* ---------- TEMPORITZADOR ---------- */
+Blocks.timer = () => {
+  const root = h('div', { class: 'stack center' });
+  let draw;
+  const start = (min) => { S.timer = { endTs: Date.now() + min * 60000, total: min * 60000, label: '' }; save(); say(T(`Començo a comptar ${min} minuts.`, `Empiezo a contar ${min} minutos.`)); draw(); };
+  draw = () => {
+    root.replaceChildren();
+    if (S.timer && S.timer.endTs > Date.now()) {
+      const C = 2 * Math.PI * 80;
+      const arc = svgEl('circle', { cx: 100, cy: 100, r: 80, fill: 'none', stroke: '#b45309', 'stroke-width': 18, 'stroke-linecap': 'round', 'stroke-dasharray': C, transform: 'rotate(-90 100 100)' });
+      const txt = svgEl('text', { x: 100, y: 108, 'text-anchor': 'middle', 'font-size': 38, 'font-weight': 700, fill: 'currentColor', 'font-family': 'inherit' });
+      const svg = svgEl('svg', { viewBox: '0 0 200 200', class: 'ring', role: 'img' }, svgEl('circle', { cx: 100, cy: 100, r: 80, fill: 'none', stroke: 'var(--line)', 'stroke-width': 18 }), arc, txt);
+      root.append(svg, h('button', { class: 'btn alt block', onclick: async () => { if (await confirmBig(T('Vols parar el temps?', '¿Quieres parar el tiempo?'), { icon: '⏳' })) { S.timer = null; save(); draw(); } } }, '✖ ' + T('Para', 'Para')));
+      root._upd = () => {
+        const left = Math.max(0, S.timer.endTs - Date.now());
+        arc.setAttribute('stroke-dashoffset', C * (1 - left / S.timer.total));
+        const s = Math.ceil(left / 1000);
+        txt.textContent = `${Core.pad(Math.floor(s / 60))}:${Core.pad(s % 60)}`;
+      };
+      root._upd();
+    } else {
+      root._upd = null;
+      root.append(h('p', { style: 'font-size:1.2rem;font-weight:700' }, T('Quant de temps?', '¿Cuánto tiempo?')), h('div', { class: 'tiles' }, [5, 10, 15, 20, 30, 60].map((m) => h('button', { class: 'tile', onclick: () => start(m) }, h('span', { style: 'font-size:2rem;font-weight:700' }, m), h('span', null, 'min')))));
+    }
+  };
+  draw();
+  return { body: root, tick: () => { if (root._upd) root._upd(); else if (S.timer && S.timer.endTs > Date.now()) draw(); }, speak: () => T('Tria quants minuts vols que compti.', 'Elige cuántos minutos quieres que cuente.') };
+};
+
+/* ============================================================
+   INTERFÍCIE: tauler, assistent inicial, configuració, monitor
+   ============================================================ */
+const App = {
+  ticks: [],
+  refresh() { const y = window.scrollY; this.render(); window.scrollTo(0, y); },
+  render() {
+    applyTheme();
+    const root = $('#app');
+    root.replaceChildren();
+    this.ticks = [];
+    Wx.subs = [];
+    helpBar.style.display = S.setup ? '' : 'none';
+    if (!S.setup) return wizard();
+    const canEdit = S.perms.board || S.perms.likes || S.perms.events || S.perms.contacts;
+    const now = new Date();
+    root.append(h('header', { class: 'top' },
+      h('div', { class: 'hi' }, h('b', null, `${S.lang === 'es' ? '¡' : ''}${Core.greeting(now.getHours(), S.lang)}${S.name ? ', ' + S.name : ''}!`), h('small', null, Core.cap(Core.dateLong(now, S.lang)))),
+      canEdit ? h('button', { class: 'ibtn', 'aria-label': T('El meu tauler', 'Mi panel'), onclick: myBoard }, '✏️') : null,
+      h('button', { class: 'ibtn', 'aria-label': T('Monitor/a', 'Monitor/a'), onclick: monitorEntry }, '⚙️')));
+    if (!Voice.unlocked) root.append(h('div', { class: 'banner', role: 'status' }, '👆 ' + T('Toca la pantalla una vegada perquè els avisos puguin parlar.', 'Toca la pantalla una vez para que los avisos puedan hablar.')));
+    const ids = S.on.filter((id) => BLOCKS[id] && S.allowed.includes(id));
+    const board = h('main', { class: 'board' });
+    ids.forEach((id, i) => board.append(makeCard(id, i < ids.length - 1)));
+    if (!ids.length) board.append(h('div', { class: 'card' }, h('div', { class: 'card-b' }, emptyMsg('🧩', T('Encara no hi ha cap bloc', 'Aún no hay ningún bloque')))));
+    root.append(board, h('div', { class: 'foot' }, T('Pictogrames: ', 'Pictogramas: '), h('a', { href: 'https://arasaac.org', target: '_blank', rel: 'noopener' }, 'ARASAAC'), ' · Govern d\'Aragó · CC BY-NC-SA'));
+    this.tick(now);
+  },
+  tick(d) { this.ticks.forEach((f) => f(d)); },
+};
+
+function makeCard(id, hasNext) {
+  const def = BLOCKS[id];
+  let inst;
+  try { inst = Blocks[id](); } catch (e) { console.error(id, e); inst = { body: h('p', null, 'Error'), speak: () => '' }; }
+  if (inst.tick) App.ticks.push(inst.tick);
+  const title = L(def);
+  const c = h('section', { class: 'card', style: `--c:${def.c}`, 'aria-label': title },
+    h('div', { class: 'card-h' }, h('span', { class: 'ic', 'aria-hidden': 'true' }, def.ic), h('h2', null, title),
+      h('button', { class: 'say', 'aria-label': T('Escolta', 'Escucha') + ': ' + title, onclick: () => say(inst.speak()) }, '🔊')),
+    h('div', { class: 'card-b' }, inst.body,
+      S.mode === 1 && hasNext ? h('button', { class: 'next-hint', onclick: (e) => { const n = e.currentTarget.closest('.card').nextElementSibling; if (n) n.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }, '⬇ ' + T('Següent', 'Siguiente')) : null));
+  return c;
+}
+
+/* ---------- Ajuda (sempre visible) ---------- */
+const helpBar = h('div', { class: 'helpbar' }, h('button', { class: 'helpbtn', onclick: () => openHelp() }, '🆘 ' + T('Ajuda', 'Ayuda')));
+function updateHelpLabel() { helpBar.firstChild.textContent = '🆘 ' + T('Ajuda', 'Ayuda'); }
+
+function openHelp() {
+  openSheet(T('Ajuda', 'Ayuda'), (body) => {
+    const ph = (S.help.phone || '').replace(/\s+/g, '');
+    const where = h('div', { class: 'stack' });
+    body.append(h('div', { class: 'stack' },
+      ph ? h('a', { class: 'btn bad big block', href: 'tel:' + ph, style: 'text-decoration:none' }, '📞 ' + T('Truca a ', 'Llama a ') + (S.help.name || ph)) : h('p', { class: 'badge' }, T('Encara no hi ha cap telèfon d\'ajuda. El monitor/a l\'ha de posar.', 'Aún no hay teléfono de ayuda. El monitor/a debe ponerlo.')),
+      h('button', { class: 'btn big block', onclick: () => {
+        const num = ph.replace(/\D/g, '').split('').join(' ');
+        const phrase = T(`Necessito ajuda. Em dic ${S.name || 'una persona'}.${ph ? ` Si us plau, truqueu a ${S.help.name || ''} al telèfon ${num}.` : ''}`, `Necesito ayuda. Me llamo ${S.name || 'una persona'}.${ph ? ` Por favor, llamen a ${S.help.name || ''} al teléfono ${num}.` : ''}`);
+        S.voice.rate = Math.min(S.voice.rate, 0.8); say(phrase);
+      } }, '🔊 ' + T('Digues en veu alta que necessito ajuda', 'Di en voz alta que necesito ayuda')),
+      h('button', { class: 'btn big block alt', onclick: async () => {
+        where.replaceChildren(h('p', { class: 'center' }, T('Buscant on soc…', 'Buscando dónde estoy…')));
+        try {
+          const loc = await new Promise((res, rej) => navigator.geolocation.getCurrentPosition((p) => res(p.coords), rej, { timeout: 12000, enableHighAccuracy: true }));
+          let city = '';
+          try { const g = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${loc.latitude}&longitude=${loc.longitude}&localityLanguage=${S.lang}`).then((r) => r.json()); city = [g.locality, g.city].filter((x, i, a) => x && a.indexOf(x) === i).join(', '); } catch (e) { /* res */ }
+          const link = `https://maps.google.com/?q=${loc.latitude},${loc.longitude}`;
+          const msg = T(`Necessito ajuda. Sóc aquí: ${link}`, `Necesito ayuda. Estoy aquí: ${link}`);
+          where.replaceChildren(h('div', { class: 'li' }, h('div', { class: 't', style: 'font-size:1.3rem' }, '📍 ' + (city || T('La meva ubicació', 'Mi ubicación')), h('small', null, `${loc.latitude.toFixed(5)}, ${loc.longitude.toFixed(5)}`))),
+            ph ? h('a', { class: 'btn ok big block', style: 'text-decoration:none', href: `sms:${ph}?body=${encodeURIComponent(msg)}` }, '✉️ ' + T('Envia on sóc', 'Envía dónde estoy')) : null,
+            h('a', { class: 'btn alt block', style: 'text-decoration:none', href: link, target: '_blank', rel: 'noopener' }, '🗺️ ' + T('Veure al mapa', 'Ver en el mapa')));
+          say(city ? T(`Soc a ${city}.`, `Estoy en ${city}.`) : '');
+        } catch (e) { where.replaceChildren(h('p', { class: 'badge red' }, T('No puc saber on soc. Mira que la ubicació estigui activada.', 'No puedo saber dónde estoy. Mira que la ubicación esté activada.'))); }
+      } }, '📍 ' + T('Digues on sóc', 'Dime dónde estoy')),
+      where,
+      h('a', { class: 'btn alt block', style: 'text-decoration:none;margin-top:18px', href: 'tel:112' }, '🚑 112 · ' + T('Emergències', 'Emergencias'))));
+  });
+}
+
+/* ---------- El meu rellotge ---------- */
+function clockLook() {
+  openSheet(T('El meu rellotge', 'Mi reloj'), (body, ctl) => {
+    const inst = Blocks.clock({ preview: true });
+    const iv = setInterval(() => inst.tick(new Date()), 1000);
+    ctl.onClose = () => clearInterval(iv);
+    const set = (k, v) => { S.clock[k] = v; save(); App.refresh(); ctl.refresh(); };
+    body.append(inst.body,
+      h('h3', null, T('Tipus', 'Tipo')), seg([['analog', '🕒 ' + T('Esfera', 'Esfera')], ['digital', '🔢 ' + T('Digital', 'Digital')]], S.clock.kind, (v) => set('kind', v)),
+      h('h3', null, T('Color', 'Color')), h('div', { class: 'row' }, Object.entries(COLORS).map(([k, c]) => h('button', { class: 'dot', style: `background:${c.face};border-color:${c.acc}`, 'aria-pressed': String(S.clock.color === k), 'aria-label': L(c), onclick: () => { say(L(c)); set('color', k); } }))),
+      S.clock.kind === 'analog' ? [h('h3', null, T('Forma', 'Forma')), seg([['round', '⚪ ' + T('Rodona', 'Redonda')], ['square', '⬜ ' + T('Quadrada', 'Cuadrada')], ['hex', '⬡ ' + T('Hexàgon', 'Hexágono')]], S.clock.shape, (v) => set('shape', v))] : null,
+      toggle(T('Mostra els segons', 'Muestra los segundos'), S.clock.seconds, (v) => set('seconds', v)));
+  });
+}
+
+/* ---------- El meu tauler (la persona) ---------- */
+function moveOn(id, dir) {
+  const i = S.on.indexOf(id), j = i + dir;
+  if (i < 0 || j < 0 || j >= S.on.length) return;
+  [S.on[i], S.on[j]] = [S.on[j], S.on[i]];
+  save();
+}
+function myBoard() {
+  openSheet(T('El meu tauler', 'Mi panel'), (body, ctl) => {
+    if (S.perms.board) {
+      body.append(h('h3', null, T('Què vull veure', 'Qué quiero ver')));
+      const list = [...S.on.filter((id) => S.allowed.includes(id)), ...S.allowed.filter((id) => !S.on.includes(id))];
+      list.forEach((id) => {
+        const on = S.on.includes(id), d = BLOCKS[id];
+        body.append(h('div', { class: 'li' }, h('span', { style: 'font-size:2rem' }, d.ic), h('div', { class: 't' }, L(d)),
+          on ? h('button', { class: 'mini', 'aria-label': T('Puja', 'Sube'), onclick: () => { moveOn(id, -1); App.refresh(); ctl.refresh(); } }, '▲') : null,
+          on ? h('button', { class: 'mini', 'aria-label': T('Baixa', 'Baja'), onclick: () => { moveOn(id, 1); App.refresh(); ctl.refresh(); } }, '▼') : null,
+          h('button', { class: 'sw', role: 'switch', 'aria-checked': String(on), 'aria-label': L(d), onclick: () => { if (on) S.on = S.on.filter((x) => x !== id); else S.on.push(id); save(); App.refresh(); ctl.refresh(); } })));
+      });
+      body.append(h('h3', null, T('Com ho veig', 'Cómo lo veo')),
+        h('label', { class: 'f' }, T('Mida de la lletra', 'Tamaño de la letra')), seg([[0, 'A'], [1, 'A+'], [2, 'A++']], S.theme.scale, (v) => { S.theme.scale = v; save(); App.refresh(); }),
+        h('label', { class: 'f' }, T('Colors', 'Colores')), seg([['normal', '☀️ ' + T('Clars', 'Claros')], ['alt', '🌑 ' + T('Contrast alt', 'Contraste alto')]], S.theme.contrast, (v) => { S.theme.contrast = v; save(); App.refresh(); }));
+    }
+    body.append(h('h3', null, T('Més coses', 'Más cosas')));
+    const rows = [];
+    if (S.perms.likes) rows.push(['❤️', T('Els meus gustos', 'Mis gustos'), () => likesFlow()]);
+    if (S.perms.board) rows.push(['🎨', T('El meu rellotge', 'Mi reloj'), clockLook]);
+    if (S.perms.events) rows.push(['🗓️', T('Apunta a l\'agenda', 'Apunta en la agenda'), () => agendaAdd()]);
+    if (S.perms.contacts) rows.push(['📞', T('Les meves persones', 'Mis personas'), editContacts], ['✅', T('Les meves rutines', 'Mis rutinas'), editRoutines]);
+    rows.push(['🔊', T('La meva veu', 'Mi voz'), voiceSheet]);
+    rows.forEach(([ic, label, fn]) => body.append(h('button', { class: 'li', style: 'width:100%;text-align:left', onclick: fn }, h('span', { style: 'font-size:2rem' }, ic), h('div', { class: 't' }, label), h('span', null, '›'))));
+  });
+}
+function voiceSheet() {
+  openSheet(T('La meva veu', 'Mi voz'), (body) => {
+    body.append(h('p', null, T('Prova la veu i tria la velocitat que t\'agradi.', 'Prueba la voz y elige la velocidad que te guste.')),
+      seg([[0.65, '🐢 ' + T('Lenta', 'Lenta')], [0.85, T('Normal', 'Normal')], [1.05, '🐇 ' + T('Ràpida', 'Rápida')]], S.voice.rate, (v) => { S.voice.rate = v; save(); say(T('Hola! Així sona la meva veu.', '¡Hola! Así suena mi voz.')); }),
+      h('div', { style: 'margin-top:14px' }, h('button', { class: 'btn big block', onclick: () => say(T('Hola! Així sona la meva veu.', '¡Hola! Así suena mi voz.')) }, '🔊 ' + T('Prova', 'Prueba'))),
+      !Voice.has(S.lang) && Voice.voices.length ? h('p', { class: 'badge red', style: 'margin-top:14px' }, T('Aquest mòbil no té veu en català. Al monitor/a: instal·la "Síntesi de veu de Google" i descarrega el català.', 'Este móvil no tiene voz en este idioma. Al monitor/a: instala "Síntesis de voz de Google" y descarga el idioma.')) : null);
+  });
+}
+
+/* ---------- Gustos: esports, música, signe ---------- */
+function likesFlow(only) {
+  const order = only ? [only] : ['sports', 'music', 'zodiac'];
+  let idx = 0;
+  openSheet(T('Els meus gustos', 'Mis gustos'), (body, ctl) => {
+    const step = order[idx];
+    const nav = () => h('div', { class: 'row', style: 'margin-top:22px' },
+      idx > 0 ? h('button', { class: 'btn alt grow', onclick: () => { idx--; ctl.refresh(); body.scrollTop = 0; } }, '← ' + T('Abans', 'Antes')) : null,
+      h('button', { class: 'btn big grow', onclick: () => { if (idx < order.length - 1) { idx++; ctl.refresh(); body.scrollTop = 0; } else { ctl.close(); App.refresh(); confetti(); say(T('Molt bé!', '¡Muy bien!')); } } }, idx < order.length - 1 ? T('Següent', 'Siguiente') + ' →' : '✔ ' + T('Fet', 'Hecho')));
+    if (step === 'sports') {
+      body.append(h('h3', null, '🏅 ' + T('Quins esports t\'agraden?', '¿Qué deportes te gustan?')),
+        pictGrid(SPORTS, S.sports.picked, { onChange: (sel) => { S.sports.picked = sel; save(); } }));
+      S.sports.picked.filter((id) => TEAMS[id]).forEach((sid) => {
+        const sp = SPORTS.find((s) => s.id === sid);
+        body.append(h('h3', null, sp.e + ' ' + T('Quin equip segueixes? ', '¿Qué equipo sigues? ') + '(' + L(sp) + ')'));
+        const chips = h('div', { class: 'chips' });
+        const draw = () => {
+          chips.replaceChildren(...TEAMS[sid].map((t) => { const has = S.sports.teams.some((x) => x.name === t.name && x.sport === sid); return h('button', { class: 'chip', 'aria-pressed': String(has), style: has ? 'border-color:var(--brand);box-shadow:0 0 0 3px var(--brand) inset' : '', onclick: () => { if (has) S.sports.teams = S.sports.teams.filter((x) => !(x.name === t.name && x.sport === sid)); else S.sports.teams.push({ ...t, sport: sid }); save(); say(t.name); draw(); } }, (has ? '✓ ' : '') + t.name); }),
+            ...S.sports.teams.filter((x) => x.sport === sid && !TEAMS[sid].some((t) => t.name === x.name)).map((x) => h('button', { class: 'chip', style: 'border-color:var(--brand);box-shadow:0 0 0 3px var(--brand) inset', onclick: () => { S.sports.teams = S.sports.teams.filter((y) => y !== x); save(); draw(); } }, '✓ ' + x.name)),
+            h('button', { class: 'chip', onclick: () => teamSearch(sid, draw) }, '🔎 ' + T('Un altre equip', 'Otro equipo')));
+        };
+        draw(); body.append(chips);
+      });
+      body.append(nav());
+    } else if (step === 'music') {
+      body.append(h('h3', null, '🎵 ' + T('Quina música t\'agrada?', '¿Qué música te gusta?')), pictGrid(MUSIC, S.music.styles, { onChange: (sel) => { S.music.styles = sel; save(); } }),
+        h('h3', null, '🎤 ' + T('Cantants o grups preferits', 'Cantantes o grupos preferidos')));
+      const chips = h('div', { class: 'chips' });
+      const drawA = () => chips.replaceChildren(...S.music.artists.map((a) => h('button', { class: 'chip', onclick: () => { S.music.artists = S.music.artists.filter((x) => x !== a); save(); drawA(); }, 'aria-label': T('Treu ', 'Quita ') + a }, a + ' ✖')));
+      drawA();
+      const inp = h('input', { type: 'text', placeholder: T('Escriu un nom', 'Escribe un nombre'), enterkeyhint: 'done' });
+      const add = (t) => { t = (t || '').trim(); if (t && !S.music.artists.includes(t)) { S.music.artists.push(t); save(); drawA(); } inp.value = ''; };
+      inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') add(inp.value); });
+      body.append(chips, h('div', { class: 'row', style: 'margin-top:10px' }, h('div', { class: 'grow' }, inp), h('button', { class: 'ibtn', 'aria-label': T('Afegeix', 'Añade'), onclick: () => add(inp.value) }, '➕'), Voice.recOK ? h('button', { class: 'ibtn', 'aria-label': T('Digues-ho', 'Dilo'), onclick: async () => add(await askByVoice(T('Digues el nom', 'Di el nombre'))) }, '🎤') : null), nav());
+    } else {
+      body.append(h('h3', null, '✨ ' + T('Quin és el teu signe?', '¿Cuál es tu signo?')),
+        pictGrid(Core.ZODIAC.map((z) => ({ id: z.id, e: z.e, ca: z.ca, es: z.es })), S.zodiac ? [S.zodiac] : [], { multi: false, onChange: (sel) => { S.zodiac = sel[0] || ''; save(); } }), nav());
+    }
+    body.append(h('p', { class: 'muted center', style: 'margin-top:20px;font-size:.8rem' }, T('Pictogrames: ARASAAC (arasaac.org), Govern d\'Aragó. Llicència CC BY-NC-SA.', 'Pictogramas: ARASAAC (arasaac.org), Gobierno de Aragón. Licencia CC BY-NC-SA.')));
+  });
+}
+function teamSearch(sportId, done) {
+  openSheet(T('Cerca un equip', 'Busca un equipo'), (body, ctl) => {
+    const inp = h('input', { type: 'text', placeholder: T('Nom de l\'equip', 'Nombre del equipo'), enterkeyhint: 'search' });
+    const res = h('div');
+    const go = async (q) => {
+      if (!q || !q.trim()) return;
+      res.replaceChildren(h('p', { class: 'center muted' }, T('Cercant…', 'Buscando…')));
+      try {
+        const r = await fetch(SDB + 'searchteams.php?t=' + encodeURIComponent(q.trim())).then((x) => x.json());
+        const list = (r.teams || []).slice(0, 10);
+        if (!list.length) return res.replaceChildren(h('p', { class: 'badge' }, T('No n\'he trobat cap.', 'No he encontrado ninguno.')));
+        res.replaceChildren(...list.map((t) => h('button', { class: 'li', style: 'width:100%;text-align:left', onclick: () => {
+          const sp = SPORTS.find((s) => s.sdb === t.strSport);
+          S.sports.teams.push({ name: t.strTeam, id: t.idTeam, badge: t.strBadge || '', sport: (sp && sp.id) || sportId });
+          if (sp && !S.sports.picked.includes(sp.id)) S.sports.picked.push(sp.id);
+          save(); ctl.close(); done && done(); say(t.strTeam);
+        } }, h('div', { class: 't' }, t.strTeam, h('small', null, `${t.strSport || ''} · ${t.strCountry || ''}`)), h('span', null, '＋'))));
+      } catch (e) { res.replaceChildren(h('p', { class: 'badge red' }, T('Ara no puc cercar. Mira la connexió.', 'Ahora no puedo buscar. Mira la conexión.'))); }
+    };
+    inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') go(inp.value); });
+    body.append(inp, h('div', { class: 'row', style: 'margin:12px 0' }, h('button', { class: 'btn grow', onclick: () => go(inp.value) }, '🔎 ' + T('Cerca', 'Busca')), Voice.recOK ? h('button', { class: 'btn alt', onclick: async () => { const t = await askByVoice(T('Digues el nom de l\'equip', 'Di el nombre del equipo')); if (t) { inp.value = t; go(t); } } }, '🎤') : null), res);
+  });
+}
+
+/* ---------- Editors del monitor ---------- */
+function editContacts() {
+  openSheet(T('Les meves persones', 'Mis personas'), (body, ctl) => {
+    S.contacts.forEach((c) => body.append(h('div', { class: 'li' }, c.photo ? h('img', { class: 'photo', src: c.photo, alt: '' }) : h('div', { class: 'photo' }, '👤'), h('div', { class: 't' }, c.name, h('small', null, c.phone)),
+      h('button', { class: 'mini', onclick: () => contactForm(c, () => ctl.refresh()), 'aria-label': T('Edita', 'Edita') }, '✏️'))));
+    body.append(h('button', { class: 'btn big block', onclick: () => contactForm(null, () => ctl.refresh()) }, '➕ ' + T('Afegeix una persona', 'Añade una persona')));
+  });
+}
+function contactForm(c, done) {
+  const d = c ? { ...c } : { id: uid(), name: '', phone: '', photo: '' };
+  openSheet(c ? T('Edita', 'Edita') : T('Persona nova', 'Persona nueva'), (body, ctl) => {
+    const n = h('input', { type: 'text', value: d.name, placeholder: T('Nom', 'Nombre') });
+    const p = h('input', { type: 'tel', value: d.phone, placeholder: T('Telèfon', 'Teléfono'), inputmode: 'tel' });
+    body.append(h('div', { class: 'row' }, d.photo ? h('img', { class: 'photo', src: d.photo, alt: '' }) : h('div', { class: 'photo' }, '👤'), h('button', { class: 'btn alt', onclick: async () => { const ph = await pickPhoto(); if (ph) { d.photo = ph; d.name = n.value; d.phone = p.value; ctl.refresh(); } } }, '📷 ' + T('Foto', 'Foto'))),
+      field(T('Nom', 'Nombre'), n), field(T('Telèfon', 'Teléfono'), p),
+      h('div', { class: 'stack', style: 'margin-top:20px' },
+        h('button', { class: 'btn ok big block', onclick: () => { d.name = n.value.trim(); d.phone = p.value.trim(); if (!d.name || !d.phone) return toast(T('Falta el nom o el telèfon.', 'Falta el nombre o el teléfono.')); if (c) Object.assign(c, d); else S.contacts.push(d); save(); ctl.close(); done && done(); App.refresh(); } }, '✔ ' + T('Desa', 'Guarda')),
+        c ? h('button', { class: 'btn bad block', onclick: async () => { if (await confirmBig(T('Vols esborrar aquesta persona?', '¿Quieres borrar a esta persona?'), { icon: '🗑️' })) { S.contacts = S.contacts.filter((x) => x !== c); save(); ctl.close(); done && done(); App.refresh(); } } }, '🗑️ ' + T('Esborra', 'Borra')) : null));
+  });
+}
+function editMeds() {
+  openSheet(T('Medicació', 'Medicación'), (body, ctl) => {
+    body.append(h('p', { class: 'badge' }, T('Recorda: aquesta app no substitueix una alarma mèdica fiable.', 'Recuerda: esta app no sustituye una alarma médica fiable.')));
+    S.meds.forEach((m) => body.append(h('div', { class: 'li' }, m.photo ? h('img', { class: 'photo', src: m.photo, alt: '' }) : h('div', { class: 'photo' }, m.icon || '💊'), h('div', { class: 't' }, m.name, h('small', null, (m.times || []).join(' · '))), h('button', { class: 'mini', onclick: () => medForm(m, () => ctl.refresh()), 'aria-label': T('Edita', 'Edita') }, '✏️'))));
+    body.append(h('button', { class: 'btn big block', style: 'margin-top:14px', onclick: () => medForm(null, () => ctl.refresh()) }, '➕ ' + T('Afegeix medicació', 'Añade medicación')));
+  });
+}
+function medForm(m, done) {
+  const d = m ? JSON.parse(JSON.stringify(m)) : { id: uid(), name: '', times: ['08:00'], days: [0, 1, 2, 3, 4, 5, 6], icon: '💊', photo: '' };
+  openSheet(m ? T('Edita medicació', 'Edita medicación') : T('Medicació nova', 'Medicación nueva'), (body, ctl) => {
+    const n = h('input', { type: 'text', value: d.name, placeholder: T('Nom (p. ex. Pastilla blanca)', 'Nombre (p. ej. Pastilla blanca)') });
+    const t = h('input', { type: 'time', value: '' });
+    const names = Core.DAYS[S.lang];
+    const order = [1, 2, 3, 4, 5, 6, 0];
+    body.append(field(T('Nom', 'Nombre'), n),
+      h('label', { class: 'f' }, T('Foto o icona', 'Foto o icono')),
+      h('div', { class: 'row' }, d.photo ? h('img', { class: 'photo', src: d.photo, alt: '' }) : h('div', { class: 'photo' }, d.icon), h('button', { class: 'btn alt', onclick: async () => { const ph = await pickPhoto(); if (ph) { d.photo = ph; d.name = n.value; ctl.refresh(); } } }, '📷'), d.photo ? h('button', { class: 'btn alt', onclick: () => { d.photo = ''; d.name = n.value; ctl.refresh(); } }, '✖')  : null),
+      h('div', { class: 'chips', style: 'margin-top:8px' }, ['💊', '💧', '🧴', '👁️', '💉', '🩹', '🫁'].map((i) => h('button', { class: 'chip', 'aria-pressed': String(d.icon === i), style: d.icon === i ? 'border-color:var(--brand)' : '', onclick: () => { d.icon = i; d.name = n.value; ctl.refresh(); } }, i))),
+      h('label', { class: 'f' }, T('Hores', 'Horas')),
+      h('div', { class: 'chips' }, d.times.map((x, i) => h('button', { class: 'chip', onclick: () => { d.times.splice(i, 1); d.name = n.value; ctl.refresh(); }, 'aria-label': T('Treu ', 'Quita ') + x }, x + ' ✖'))),
+      h('div', { class: 'row', style: 'margin-top:10px' }, h('div', { class: 'grow' }, t), h('button', { class: 'btn', onclick: () => { if (t.value && !d.times.includes(t.value)) { d.times.push(t.value); d.times.sort(); d.name = n.value; ctl.refresh(); } } }, '➕')),
+      h('label', { class: 'f' }, T('Dies', 'Días')),
+      h('div', { class: 'chips' }, order.map((k) => h('button', { class: 'chip', 'aria-pressed': String(d.days.includes(k)), style: d.days.includes(k) ? 'border-color:var(--brand);box-shadow:0 0 0 3px var(--brand) inset' : '', onclick: () => { d.days = d.days.includes(k) ? d.days.filter((x) => x !== k) : [...d.days, k]; d.name = n.value; ctl.refresh(); } }, names[k].slice(0, 3)))),
+      h('div', { class: 'stack', style: 'margin-top:22px' },
+        h('button', { class: 'btn ok big block', onclick: () => { d.name = n.value.trim(); if (!d.name || !d.times.length || !d.days.length) return toast(T('Falta el nom, l\'hora o els dies.', 'Falta el nombre, la hora o los días.')); if (m) Object.assign(m, d); else S.meds.push(d); save(); ctl.close(); done && done(); App.refresh(); } }, '✔ ' + T('Desa', 'Guarda')),
+        m ? h('button', { class: 'btn bad block', onclick: async () => { if (await confirmBig(T('Vols esborrar aquesta medicació?', '¿Quieres borrar esta medicación?'), { icon: '🗑️' })) { S.meds = S.meds.filter((x) => x !== m); save(); ctl.close(); done && done(); App.refresh(); } } }, '🗑️ ' + T('Esborra', 'Borra')) : null));
+  });
+}
+function editRoutines() {
+  openSheet(T('Les meves rutines', 'Mis rutinas'), (body, ctl) => {
+    S.routines.forEach((r) => body.append(h('div', { class: 'li' }, h('div', { class: 't' }, L(r.name), h('small', null, r.steps.map((s) => (actionById(s) || { e: '' }).e).join(' '))), h('button', { class: 'mini', onclick: () => routineForm(r, () => ctl.refresh()), 'aria-label': T('Edita', 'Edita') }, '✏️'))));
+    body.append(h('button', { class: 'btn big block', onclick: () => routineForm(null, () => ctl.refresh()) }, '➕ ' + T('Rutina nova', 'Rutina nueva')));
+  });
+}
+function routineForm(r, done) {
+  const d = r ? { id: r.id, name: L(r.name), steps: r.steps.slice() } : { id: uid(), name: '', steps: [] };
+  openSheet(r ? T('Edita la rutina', 'Edita la rutina') : T('Rutina nova', 'Rutina nueva'), (body, ctl) => {
+    const n = h('input', { type: 'text', value: d.name, placeholder: T('Nom (p. ex. Matí)', 'Nombre (p. ej. Mañana)') });
+    body.append(field(T('Nom', 'Nombre'), n), h('h3', null, T('Passos', 'Pasos')));
+    d.steps.forEach((sid, i) => {
+      const a = actionById(sid);
+      body.append(h('div', { class: 'li' }, pictEl(a, 48), h('div', { class: 't' }, L(a)),
+        h('button', { class: 'mini', onclick: () => { if (i > 0) { [d.steps[i - 1], d.steps[i]] = [d.steps[i], d.steps[i - 1]]; d.name = n.value; ctl.refresh(); } } }, '▲'),
+        h('button', { class: 'mini', onclick: () => { if (i < d.steps.length - 1) { [d.steps[i + 1], d.steps[i]] = [d.steps[i], d.steps[i + 1]]; d.name = n.value; ctl.refresh(); } } }, '▼'),
+        h('button', { class: 'mini bad', onclick: () => { d.steps.splice(i, 1); d.name = n.value; ctl.refresh(); }, 'aria-label': T('Treu', 'Quita') }, '✖')));
+    });
+    body.append(h('button', { class: 'btn alt block', onclick: () => { d.name = n.value; openSheet(T('Afegeix un pas', 'Añade un paso'), (b2, c2) => b2.append(pictGrid(ACTIONS, [], { cols: 3, onChange: (sel) => { d.steps.push(sel[0]); c2.close(); ctl.refresh(); } }))); } }, '➕ ' + T('Afegeix un pas', 'Añade un paso')),
+      h('div', { class: 'stack', style: 'margin-top:22px' },
+        h('button', { class: 'btn ok big block', onclick: () => { d.name = n.value.trim(); if (!d.name || !d.steps.length) return toast(T('Falta el nom o els passos.', 'Falta el nombre o los pasos.')); const nm = { ca: d.name, es: d.name }; if (r) { r.name = nm; r.steps = d.steps; } else S.routines.push({ id: d.id, name: nm, steps: d.steps }); save(); ctl.close(); done && done(); App.refresh(); } }, '✔ ' + T('Desa', 'Guarda')),
+        r ? h('button', { class: 'btn bad block', onclick: async () => { if (await confirmBig(T('Vols esborrar la rutina?', '¿Quieres borrar la rutina?'), { icon: '🗑️' })) { S.routines = S.routines.filter((x) => x !== r); save(); ctl.close(); done && done(); App.refresh(); } } }, '🗑️ ' + T('Esborra', 'Borra')) : null));
+  });
+}
+
+/* ---------- Panell del monitor/a ---------- */
+async function monitorEntry() {
+  if (!S.pin) return monitorPanel();
+  for (;;) {
+    const p = await pinPad(T('PIN del monitor/a', 'PIN del monitor/a'));
+    if (p === null) return;
+    if (hashPin(p) === S.pin) return monitorPanel();
+    toast(T('PIN incorrecte', 'PIN incorrecto'));
+  }
+}
+function applyMode(m) {
+  S.mode = m; S.allowed = MODES[m].blocks.slice(); S.on = MODES[m].blocks.slice(); S.perms = { ...MODES[m].perms };
+  S.theme.scale = MODES[m].scale === 0 ? Math.min(S.theme.scale, 1) : MODES[m].scale;
+  save(); App.refresh();
+}
+const modeInfo = () => ({
+  1: { e: '🤝', t: T('Acompanyat/da', 'Acompañado/a'), d: T('Pocs blocs, molt grans, un per pantalla. Només el monitor/a configura.', 'Pocos bloques, muy grandes, uno por pantalla. Solo el monitor/a configura.') },
+  2: { e: '🧭', t: T('Amb suport', 'Con apoyo'), d: T('La persona tria què veu i els seus gustos. El monitor/a posa els límits.', 'La persona elige qué ve y sus gustos. El monitor/a pone los límites.') },
+  3: { e: '🚀', t: T('Autònom/a', 'Autónomo/a'), d: T('Tots els blocs i totes les opcions. El monitor/a només vigila la medicació i l\'ajuda.', 'Todos los bloques y opciones. El monitor/a solo vigila la medicación y la ayuda.') },
+});
+function modePicker(current, onPick) {
+  const info = modeInfo();
+  const wrap = h('div', { class: 'stack' });
+  [1, 2, 3].forEach((m) => wrap.append(h('button', { class: 'li', style: 'width:100%;text-align:left;align-items:flex-start', 'aria-pressed': String(current === m), onclick: () => { current = m; onPick(m); Array.from(wrap.children).forEach((c, i) => { c.setAttribute('aria-pressed', String(i + 1 === m)); c.style.borderColor = i + 1 === m ? 'var(--brand)' : ''; c.style.boxShadow = i + 1 === m ? '0 0 0 3px var(--brand) inset' : ''; }); } }, h('span', { style: 'font-size:2.4rem' }, info[m].e), h('div', { class: 't' }, `${m}. ${info[m].t}`, h('small', null, info[m].d)))));
+  Array.from(wrap.children).forEach((c, i) => { if (i + 1 === current) { c.style.borderColor = 'var(--brand)'; c.style.boxShadow = '0 0 0 3px var(--brand) inset'; } });
+  return wrap;
+}
+const openAcc = new Set();
+function monitorPanel() {
+  openSheet(T('Monitor/a', 'Monitor/a'), (body, ctl) => {
+    if (!S.pin) body.append(h('p', { class: 'badge red' }, T('Encara no hi ha PIN. Posa\'n un a "PIN i seguretat".', 'Aún no hay PIN. Pon uno en "PIN y seguridad".')));
+    const acc = (id, icon, title, build) => {
+      const open = openAcc.has(id);
+      const a = h('div', { class: 'acc' }, h('button', { 'aria-expanded': String(open), onclick: () => { open ? openAcc.delete(id) : openAcc.add(id); ctl.refresh(); } }, h('span', null, icon), h('span', null, title), h('span', { class: 'cv' }, open ? '▲' : '▼')));
+      if (open) { const b = h('div', { class: 'acc-b' }); build(b); a.append(b); }
+      body.append(a);
+    };
+    const row = (ic, label, fn) => h('button', { class: 'li', style: 'width:100%;text-align:left', onclick: fn }, h('span', { style: 'font-size:1.8rem' }, ic), h('div', { class: 't' }, label), h('span', null, '›'));
+
+    acc('mode', '🎚️', T('Mode i permisos', 'Modo y permisos'), (b) => {
+      b.append(h('h3', null, T('Mode', 'Modo')), modePicker(S.mode, async (m) => { if (m === S.mode) return; if (await confirmBig(T('Canviar de mode restableix els blocs i els permisos als del mode nou. Continuar?', 'Cambiar de modo restablece los bloques y permisos a los del modo nuevo. ¿Continuar?'), { icon: '🎚️' })) { applyMode(m); ctl.refresh(); } else ctl.refresh(); }),
+        h('h3', null, T('Què pot fer la persona', 'Qué puede hacer la persona')),
+        toggle(T('Canviar què veu i l\'ordre', 'Cambiar qué ve y el orden'), S.perms.board, (v) => { S.perms.board = v; save(); App.refresh(); }),
+        toggle(T('Triar els seus gustos', 'Elegir sus gustos'), S.perms.likes, (v) => { S.perms.likes = v; save(); App.refresh(); }),
+        toggle(T('Apuntar coses a l\'agenda', 'Apuntar cosas en la agenda'), S.perms.events, (v) => { S.perms.events = v; save(); App.refresh(); }),
+        toggle(T('Gestionar persones i rutines', 'Gestionar personas y rutinas'), S.perms.contacts, (v) => { S.perms.contacts = v; save(); App.refresh(); }));
+    });
+    acc('blocks', '🧩', T('Blocs del tauler', 'Bloques del panel'), (b) => {
+      b.append(h('p', { class: 'muted' }, T('"Permès": la persona el pot fer servir. "Visible": ara surt al tauler.', '"Permitido": la persona lo puede usar. "Visible": ahora aparece en el panel.')));
+      const list = [...S.on, ...ALL_BLOCKS.filter((id) => !S.on.includes(id))];
+      list.forEach((id) => {
+        const d = BLOCKS[id], al = S.allowed.includes(id), on = S.on.includes(id);
+        b.append(h('div', { class: 'li', style: 'flex-wrap:wrap' }, h('span', { style: 'font-size:1.8rem' }, d.ic), h('div', { class: 't' }, L(d)),
+          on ? h('button', { class: 'mini', onclick: () => { moveOn(id, -1); App.refresh(); ctl.refresh(); }, 'aria-label': T('Puja', 'Sube') }, '▲') : null,
+          on ? h('button', { class: 'mini', onclick: () => { moveOn(id, 1); App.refresh(); ctl.refresh(); }, 'aria-label': T('Baixa', 'Baja') }, '▼') : null,
+          h('div', { style: 'flex-basis:100%;display:flex;gap:18px' }, h('div', { style: 'flex:1' }, toggle(T('Permès', 'Permitido'), al, (v) => { if (v) { if (!S.allowed.includes(id)) S.allowed.push(id); } else { S.allowed = S.allowed.filter((x) => x !== id); S.on = S.on.filter((x) => x !== id); } save(); App.refresh(); ctl.refresh(); })),
+            h('div', { style: 'flex:1' }, toggle(T('Visible', 'Visible'), on, (v) => { if (v) { if (!S.allowed.includes(id)) S.allowed.push(id); if (!S.on.includes(id)) S.on.push(id); } else S.on = S.on.filter((x) => x !== id); save(); App.refresh(); ctl.refresh(); })))));
+      });
+    });
+    acc('people', '👤', T('Perfil i ajuda', 'Perfil y ayuda'), (b) => {
+      const n = h('input', { type: 'text', value: S.name }), hn = h('input', { type: 'text', value: S.help.name }), hp = h('input', { type: 'tel', inputmode: 'tel', value: S.help.phone });
+      const bd = h('input', { type: 'date', value: S.birthday ? `2000-${S.birthday}` : '' });
+      b.append(field(T('Nom de la persona', 'Nombre de la persona'), n), field(T('Aniversari (dia i mes)', 'Cumpleaños (día y mes)'), bd),
+        h('h3', null, T('Qui l\'ajuda (botó Ajuda)', 'Quién le ayuda (botón Ayuda)')), field(T('Nom', 'Nombre'), hn), field(T('Telèfon', 'Teléfono'), hp),
+        h('div', { style: 'margin-top:14px' }, h('button', { class: 'btn ok block', onclick: () => { S.name = n.value.trim(); S.help.name = hn.value.trim(); S.help.phone = hp.value.trim(); S.birthday = bd.value ? bd.value.slice(5) : ''; save(); App.refresh(); toast(T('Desat', 'Guardado')); } }, '✔ ' + T('Desa', 'Guarda'))),
+        h('h3', null, T('Llengua', 'Idioma')), seg([['ca', 'Català'], ['es', 'Castellano']], S.lang, (v) => { S.lang = v; save(); updateHelpLabel(); App.refresh(); ctl.refresh(); }));
+    });
+    acc('meds', '💊', T('Medicació', 'Medicación'), (b) => b.append(row('💊', T('Gestiona la medicació', 'Gestiona la medicación'), editMeds)));
+    acc('agenda', '🗓️', T('Agenda', 'Agenda'), (b) => {
+      const evs = S.events.filter((e) => e.ts > Date.now() - 3600000).sort((a, c) => a.ts - c.ts);
+      if (!evs.length) b.append(h('p', { class: 'muted' }, T('No hi ha res apuntat.', 'No hay nada apuntado.')));
+      evs.forEach((e) => b.append(h('div', { class: 'li' }, h('span', { style: 'font-size:1.8rem' }, e.icon), h('div', { class: 't' }, e.title, h('small', null, Core.cap(Core.whenWords(e.ts, Date.now(), S.lang)))), h('button', { class: 'mini bad', 'aria-label': T('Esborra', 'Borra'), onclick: () => { S.events = S.events.filter((x) => x.id !== e.id); save(); App.refresh(); ctl.refresh(); } }, '🗑️'))));
+      b.append(h('button', { class: 'btn block', onclick: () => agendaAdd() }, '➕ ' + T('Apunta una cosa', 'Apunta algo')));
+    });
+    acc('contacts', '📞', T('Persones i rutines', 'Personas y rutinas'), (b) => b.append(row('📞', T('Les seves persones', 'Sus personas'), editContacts), row('✅', T('Les seves rutines', 'Sus rutinas'), editRoutines), row('❤️', T('Gustos (esports, música, signe)', 'Gustos (deportes, música, signo)'), () => likesFlow()), row('🎨', T('Rellotge', 'Reloj'), clockLook)));
+    acc('look', '🎨', T('Aparença i veu', 'Apariencia y voz'), (b) => {
+      b.append(h('label', { class: 'f' }, T('Mida de la lletra', 'Tamaño de la letra')), seg([[0, 'A'], [1, 'A+'], [2, 'A++']], S.theme.scale, (v) => { S.theme.scale = v; save(); App.refresh(); }),
+        h('label', { class: 'f' }, T('Colors', 'Colores')), seg([['normal', '☀️ ' + T('Clars', 'Claros')], ['alt', '🌑 ' + T('Contrast alt', 'Contraste alto')]], S.theme.contrast, (v) => { S.theme.contrast = v; save(); App.refresh(); }),
+        toggle(T('Lletra per a dislèxia (Lexend)', 'Letra para dislexia (Lexend)'), S.theme.dys, (v) => { S.theme.dys = v; save(); App.refresh(); }),
+        toggle(T('Pictogrames d\'ARASAAC', 'Pictogramas de ARASAAC'), S.theme.picto, (v) => { S.theme.picto = v; save(); App.refresh(); }, T('Si no, només emojis', 'Si no, solo emojis')),
+        toggle(T('Mode tranquil (sense llums intermitents)', 'Modo tranquilo (sin luces intermitentes)'), S.theme.calm, (v) => { S.theme.calm = v; save(); App.refresh(); }),
+        h('label', { class: 'f' }, T('Velocitat de la veu', 'Velocidad de la voz')), seg([[0.65, '🐢'], [0.85, T('Normal', 'Normal')], [1.05, '🐇']], S.voice.rate, (v) => { S.voice.rate = v; save(); say(T('Hola! Així sona la veu.', '¡Hola! Así suena la voz.')); }),
+        h('label', { class: 'f' }, T('Repetir l\'avís cada…', 'Repetir el aviso cada…')), seg([[1, '1 min'], [2, '2 min'], [5, '5 min'], [10, '10 min']], S.voice.repeatMin, (v) => { S.voice.repeatMin = v; save(); }),
+        h('div', { style: 'margin-top:12px' }, h('button', { class: 'btn alt block', onclick: () => { say(T('Prova de veu en català.', 'Prueba de voz en castellano.')); } }, '🔊 ' + T('Prova la veu', 'Prueba la voz'))),
+        Voice.voices.length && !Voice.has(S.lang) ? h('p', { class: 'badge red', style: 'margin-top:10px' }, T('Aquest mòbil no té veu en aquesta llengua. Instal·la "Síntesi de veu de Google" i descarrega\'n les dades.', 'Este móvil no tiene voz en este idioma. Instala "Síntesis de voz de Google" y descarga sus datos.')) : null,
+        !Voice.recOK ? h('p', { class: 'badge', style: 'margin-top:10px' }, T('Aquest navegador no té reconeixement de veu (cal Chrome).', 'Este navegador no tiene reconocimiento de voz (hace falta Chrome).')) : null);
+    });
+    acc('awake', '🔆', T('Avisos i pantalla encesa', 'Avisos y pantalla encendida'), (b) => {
+      b.append(toggle(T('Mantén la pantalla encesa', 'Mantén la pantalla encendida'), S.keepAwake, (v) => { S.keepAwake = v; save(); applyWakeLock(); }, T('Recomanat amb el mòbil connectat al carregador', 'Recomendado con el móvil conectado al cargador')),
+        h('p', { class: 'badge red', style: 'margin-top:12px;line-height:1.4' }, '⚠️ ' + T('Una pàgina web no pot garantir que l\'avís soni amb el mòbil bloquejat o l\'app en segon pla. Per a medicació important, fes servir també una alarma del mòbil o una app nativa.', 'Una página web no puede garantizar que el aviso suene con el móvil bloqueado o la app en segundo plano. Para medicación importante, usa también una alarma del móvil o una app nativa.')));
+    });
+    acc('mood', '😊', T('Estat d\'ànim (últims dies)', 'Estado de ánimo (últimos días)'), (b) => {
+      const last = S.mood.slice(-14).reverse();
+      if (!last.length) b.append(h('p', { class: 'muted' }, T('Encara no hi ha registres.', 'Aún no hay registros.')));
+      last.forEach((m) => { const mo = MOODS.find((x) => x.id === m.v); const d = new Date(m.ts); b.append(h('div', { class: 'li' }, h('span', { style: 'font-size:2rem' }, mo ? mo.e : '❔'), h('div', { class: 't' }, mo ? L(mo) : '', h('small', null, `${Core.cap(Core.DAYS[S.lang][d.getDay()])} ${Core.dayMonth(d, S.lang)} · ${hhmm(d)}`)))); });
+    });
+    acc('backup', '💾', T('Còpia de seguretat', 'Copia de seguridad'), (b) => {
+      b.append(h('p', { class: 'muted' }, T('Desa la configuració en un fitxer o porta-la a un altre mòbil.', 'Guarda la configuración en un archivo o llévala a otro móvil.')),
+        h('button', { class: 'btn block', onclick: () => {
+          const blob = new Blob([JSON.stringify(S)], { type: 'application/json' });
+          const a = h('a', { href: URL.createObjectURL(blob), download: `el-meu-tauler-${Core.ymd(new Date())}.json` });
+          document.body.append(a); a.click(); a.remove();
+        } }, '⬇️ ' + T('Desa còpia', 'Guarda copia')),
+        h('div', { style: 'height:10px' }),
+        h('button', { class: 'btn alt block', onclick: () => {
+          const inp = h('input', { type: 'file', accept: 'application/json,.json', style: 'display:none' });
+          inp.onchange = async () => {
+            try {
+              const j = JSON.parse(await inp.files[0].text());
+              if (!j || j.v !== 1) throw new Error('format');
+              if (await confirmBig(T('Aquesta còpia substituirà la configuració actual. Continuar?', 'Esta copia sustituirá la configuración actual. ¿Continuar?'), { icon: '⬆️' })) { S = deepMerge(DEF(), j); save(); updateHelpLabel(); App.refresh(); ctl.refresh(); toast(T('Còpia carregada', 'Copia cargada')); }
+            } catch (e) { toast(T('Aquest fitxer no és una còpia vàlida.', 'Este archivo no es una copia válida.')); }
+          };
+          document.body.append(inp); inp.click();
+        } }, '⬆️ ' + T('Carrega còpia', 'Carga copia')),
+        h('div', { style: 'height:10px' }),
+        h('button', { class: 'btn bad block', onclick: async () => { if (await confirmBig(T('Esborrar TOT i tornar a començar?', '¿Borrar TODO y empezar de nuevo?'), { icon: '⚠️' }) && await confirmBig(T('Segur? No es pot desfer.', '¿Seguro? No se puede deshacer.'), { icon: '⚠️' })) { localStorage.removeItem(KEY); S = DEF(); applyTheme(); while (document.querySelector('.sheet')) document.querySelector('.sheet').remove(); document.documentElement.style.overflow = ''; App.render(); } } }, '🗑️ ' + T('Esborra-ho tot', 'Borra todo')));
+    });
+    acc('pin', '🔒', T('PIN i seguretat', 'PIN y seguridad'), (b) => {
+      b.append(h('p', { class: 'muted' }, T('El PIN protegeix aquest panell. Apunta\'l en un lloc segur: si l\'oblides, només es pot recuperar esborrant les dades del navegador (i es perd la configuració).', 'El PIN protege este panel. Apúntalo en un lugar seguro: si lo olvidas, solo se recupera borrando los datos del navegador (y se pierde la configuración).')),
+        h('button', { class: 'btn block', onclick: async () => {
+          const p1 = await pinPad(T('Escriu el PIN nou', 'Escribe el PIN nuevo')); if (p1 === null) return;
+          const p2 = await pinPad(T('Repeteix-lo', 'Repítelo')); if (p2 === null) return;
+          if (p1 !== p2) return toast(T('No coincideixen', 'No coinciden'));
+          S.pin = hashPin(p1); save(); toast(T('PIN desat', 'PIN guardado')); ctl.refresh();
+        } }, '🔒 ' + (S.pin ? T('Canvia el PIN', 'Cambia el PIN') : T('Crea un PIN', 'Crea un PIN'))),
+        S.pin ? h('div', { style: 'margin-top:10px' }, h('button', { class: 'btn alt block', onclick: async () => { if (await confirmBig(T('Treure el PIN? Qualsevol persona podrà entrar al panell.', '¿Quitar el PIN? Cualquiera podrá entrar al panel.'), { icon: '🔓' })) { S.pin = null; save(); ctl.refresh(); } } }, T('Treu el PIN', 'Quita el PIN'))) : null);
+    });
+    acc('about', 'ℹ️', T('Sobre l\'app', 'Sobre la app'), (b) => {
+      b.append(h('p', null, T('Les dades es guarden només en aquest mòbil (no hi ha comptes ni servidor). Es fa servir la ubicació només per al temps i per al botó Ajuda.', 'Los datos se guardan solo en este móvil (no hay cuentas ni servidor). La ubicación se usa solo para el tiempo y para el botón Ayuda.')),
+        h('p', { style: 'margin-top:10px' }, T('Pictogrames: ', 'Pictogramas: '), h('a', { href: 'https://arasaac.org', target: '_blank', rel: 'noopener' }, 'ARASAAC'), T(' · Autor: Sergio Palao · Propietat: Govern d\'Aragó · Llicència CC BY-NC-SA (només usos no comercials).', ' · Autor: Sergio Palao · Propiedad: Gobierno de Aragón · Licencia CC BY-NC-SA (solo usos no comerciales).')),
+        h('p', { class: 'muted', style: 'margin-top:10px;font-size:.85rem' }, T('Festius: calendari de Catalunya (no inclou els locals). Dades: Open-Meteo, TheSportsDB, BigDataCloud.', 'Festivos: calendario de Cataluña (no incluye los locales). Datos: Open-Meteo, TheSportsDB, BigDataCloud.')));
+    });
+  });
+}
+
+/* ---------- Assistent inicial ---------- */
+function wizard() {
+  const root = $('#app');
+  const D = { name: '', birthday: '', mode: 2, pin: null, keepAwake: false, pinSkipped: false };
+  let step = 0;
+  const STEPS = 5;
+  const dots = () => h('div', { class: 'stepdots', 'aria-hidden': 'true' }, Array.from({ length: STEPS }, (_, i) => h('i', { class: i === step ? 'on' : '' })));
+  const nav = (next, label, disabled) => h('div', { class: 'row', style: 'margin-top:8px' },
+    step > 0 ? h('button', { class: 'btn alt', onclick: () => { step--; draw(); } }, '←') : null,
+    h('button', { class: 'btn big grow', disabled, onclick: next }, label || T('Següent', 'Siguiente') + ' →'));
+  function draw() {
+    root.replaceChildren();
+    const w = h('div', { class: 'wiz' });
+    w.append(dots());
+    if (step === 0) {
+      w.append(h('div', { class: 'hero' }, h('div', { class: 'bigemoji' }, '👋'), h('h1', null, 'Hola! · ¡Hola!'), h('p', { style: 'font-size:1.2rem' }, 'Quina llengua vols? · ¿Qué idioma quieres?')),
+        h('button', { class: 'btn big block alt', style: 'min-height:96px;font-size:1.6rem', onclick: () => { S.lang = 'ca'; applyTheme(); updateHelpLabel(); say('Hola! Benvingut. Anem a preparar el teu tauler.', 'ca'); step = 1; draw(); } }, flagEl('ca'), 'Català'),
+        h('button', { class: 'btn big block alt', style: 'min-height:96px;font-size:1.6rem', onclick: () => { S.lang = 'es'; applyTheme(); updateHelpLabel(); say('¡Hola! Bienvenido. Vamos a preparar tu panel.', 'es'); step = 1; draw(); } }, flagEl('es'), 'Castellano'));
+    } else if (step === 1) {
+      const n = h('input', { type: 'text', value: D.name, placeholder: T('El teu nom', 'Tu nombre'), enterkeyhint: 'done', 'aria-label': T('El teu nom', 'Tu nombre') });
+      const b = h('input', { type: 'date', value: D.birthday ? `2000-${D.birthday}` : '', 'aria-label': T('Aniversari', 'Cumpleaños') });
+      w.append(h('div', { class: 'hero' }, h('div', { class: 'bigemoji' }, '😊'), h('h1', null, T('Com et dius?', '¿Cómo te llamas?')), h('button', { class: 'ibtn', onclick: () => say(T('Com et dius?', '¿Cómo te llamas?')), 'aria-label': T('Escolta', 'Escucha') }, '🔊')),
+        h('div', { class: 'row' }, h('div', { class: 'grow' }, n), Voice.recOK ? h('button', { class: 'ibtn', 'aria-label': T('Digues-ho', 'Dilo'), onclick: async () => { const t = await askByVoice(T('Com et dius?', '¿Cómo te llamas?')); if (t) n.value = t.replace(/[.,!?]/g, '').trim().split(/\s+/).slice(0, 3).join(' '); } }, '🎤') : null),
+        field(T('El teu aniversari (opcional)', 'Tu cumpleaños (opcional)'), b),
+        nav(() => { D.name = n.value.trim(); D.birthday = b.value ? b.value.slice(5) : ''; step = 2; draw(); }));
+    } else if (step === 2) {
+      const pinInfo = h('p', { class: 'badge' }, D.pin ? '✔ ' + T('PIN creat', 'PIN creado') : D.pinSkipped ? T('Sense PIN (es pot posar després)', 'Sin PIN (se puede poner luego)') : T('Falta el PIN', 'Falta el PIN'));
+      const nx = nav(() => { step = 3; draw(); }, null, !D.pin && !D.pinSkipped);
+      w.append(h('div', { class: 'hero' }, h('h1', null, T('Per al monitor/a', 'Para el monitor/a')), h('p', { class: 'muted' }, T('Tria el mode segons l\'autonomia de la persona. Es pot canviar quan faci falta.', 'Elige el modo según la autonomía de la persona. Se puede cambiar cuando haga falta.'))),
+        modePicker(D.mode, (m) => { D.mode = m; }),
+        h('h3', null, T('PIN del monitor/a', 'PIN del monitor/a')), pinInfo,
+        h('button', { class: 'btn alt block', onclick: async () => {
+          const p1 = await pinPad(T('Escriu un PIN de 4 xifres', 'Escribe un PIN de 4 cifras')); if (p1 === null) return;
+          const p2 = await pinPad(T('Repeteix-lo', 'Repítelo')); if (p2 === null) return;
+          if (p1 !== p2) return toast(T('No coincideixen', 'No coinciden'));
+          D.pin = hashPin(p1); D.pinSkipped = false; draw();
+        } }, '🔒 ' + (D.pin ? T('Canvia el PIN', 'Cambia el PIN') : T('Crea el PIN', 'Crea el PIN'))),
+        !D.pin ? h('button', { class: 'btn alt', style: 'min-height:52px', onclick: () => { D.pinSkipped = true; draw(); } }, T('Ho faré més tard', 'Lo haré luego')) : null, nx);
+    } else if (step === 3) {
+      w.append(h('div', { class: 'hero' }, h('div', { class: 'bigemoji' }, '❤️'), h('h1', null, T('Què t\'agrada?', '¿Qué te gusta?')), h('p', { class: 'muted' }, T('Esports, música i el teu signe. Amb pictogrames.', 'Deportes, música y tu signo. Con pictogramas.'))),
+        h('button', { class: 'btn big block', onclick: () => { Object.assign(S, { name: D.name }); likesFlow(); } }, '👉 ' + T('Triar els meus gustos', 'Elegir mis gustos')),
+        nav(() => { step = 4; draw(); }, T('Més tard', 'Más tarde') + ' →'));
+    } else {
+      w.append(h('div', { class: 'hero' }, h('div', { class: 'bigemoji' }, '🚀'), h('h1', null, T('Quasi a punt!', '¡Casi listo!'))),
+        toggle(T('Mantén la pantalla encesa', 'Mantén la pantalla encendida'), D.keepAwake, (v) => { D.keepAwake = v; }, T('Útil si el mòbil és sobre una taula i està endollat.', 'Útil si el móvil está sobre una mesa y enchufado.')),
+        h('p', { class: 'muted' }, T('Després, el monitor/a pot afegir la medicació, les persones i les rutines des de ⚙️.', 'Después, el monitor/a puede añadir la medicación, las personas y las rutinas desde ⚙️.')),
+        nav(() => {
+          S.name = D.name; S.birthday = D.birthday; S.pin = D.pin; S.keepAwake = D.keepAwake; S.setup = true;
+          applyMode(D.mode);
+          if (!S.routines.length) S.routines = [{ id: uid(), name: { ca: 'Matí', es: 'Mañana' }, steps: ['wake', 'wash', 'teeth', 'dress', 'breakfast'] }, { id: uid(), name: { ca: 'Nit', es: 'Noche' }, steps: ['dinner', 'teeth', 'pj', 'sleep'] }];
+          S.setup = true; save(); applyWakeLock(); App.render(); confetti();
+          say(T(`Hola ${S.name}! El teu tauler està a punt.`, `¡Hola ${S.name}! Tu panel está listo.`));
+        }, '🚀 ' + T('Comença', 'Empieza')));
+    }
+    root.append(w);
+  }
+  draw();
+}
+
+/* ---------- Arrencada ---------- */
+function boot() {
+  Voice.init();
+  applyTheme();
+  document.body.append(helpBar);
+  updateHelpLabel();
+  const unlock = () => {
+    if (Voice.unlocked) return;
+    Voice.unlocked = true;
+    try { if (Voice.ok) speechSynthesis.speak(new SpeechSynthesisUtterance(' ')); } catch (e) { /* res */ }
+    try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); actx.resume && actx.resume(); } catch (e) { /* res */ }
+    const b = document.querySelector('.banner'); if (b) b.remove();
+  };
+  document.addEventListener('pointerdown', unlock, { passive: true });
+  App.render();
+  let n = 0;
+  setInterval(() => { App.tick(new Date()); if (++n % 5 === 0 && S.setup) runAlarms(); }, 1000);
+  setTimeout(() => { if (S.setup) runAlarms(); }, 800);
+  applyWakeLock();
+}
+boot();
+</script>
+</body>
+</html>
